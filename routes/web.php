@@ -1,0 +1,60 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DataMasterController;
+use App\Http\Controllers\GudangController;
+use App\Http\Controllers\KasirController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [AuthController::class, 'Index'])->middleware('guest');
+Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->name('login');
+Route::post('/login', [AuthController::class, 'authenticate']);
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/register', [AuthController::class, 'Store'])->middleware('guest')->name('register');
+
+Route::get('/dashboard', [DashboardController::class, 'Index'])->name('indexdashboard');
+
+
+
+//CONTROLLER DATA MASTER
+Route::get('/indexmasterbarang', [DataMasterController::class, 'Index'])->name('indexmasterbarang');
+Route::get('/Indexmastersupplier', [DataMasterController::class, 'Indexmastersupplier'])->name('Indexmastersupplier');
+Route::get('/Indexmasteruser', [DataMasterController::class, 'Indexmasteruser'])->name('Indexmasteruser');
+Route::get('/getdatabarang', [DataMasterController::class, 'getdatabarang'])->name('getdatabarang');
+Route::get('/getdatabarang2', [DataMasterController::class, 'getdatabarang2'])->name('getdatabarang2');
+Route::get('/getdatabarang3', [DataMasterController::class, 'getdatabarang3'])->name('getdatabarang3');
+Route::post('/simpanbarang', [DataMasterController::class, 'simpanbarang'])->name('simpanbarang');
+Route::post('/simpaneditbarang', [DataMasterController::class, 'simpaneditbarang'])->name('simpaneditbarang');
+Route::post('/hapusbarang', [DataMasterController::class, 'hapusbarang'])->name('hapusbarang');
+Route::post('/formeditbarang', [DataMasterController::class, 'formeditbarang'])->name('formeditbarang');
+Route::post('/ambildetailsediaanbarang', [DataMasterController::class, 'ambildetailsediaanbarang'])->name('ambildetailsediaanbarang');
+Route::get('/getdatasupplier', [DataMasterController::class, 'getdatasupplier'])->name('getdatasupplier');
+//supplier
+Route::post('/simpansupplier', [DataMasterController::class, 'simpansupplier'])->name('simpansupplier');
+Route::post('/formeditsupplier', [DataMasterController::class, 'formeditsupplier'])->name('formeditsupplier');
+Route::post('/simpaneditsupplier', [DataMasterController::class, 'simpaneditsupplier'])->name('simpaneditsupplier');
+Route::post('/hapussupplier', [DataMasterController::class, 'hapussupplier'])->name('hapussupplier');
+Route::post('/simpanhargajual', [DataMasterController::class, 'simpanhargajual'])->name('simpanhargajual');
+
+
+
+//Gudang
+Route::get('/indexpurchaseorder', [GudangController::class, 'Index'])->name('indexpurchaseorder');
+Route::get('/indexstoksediaan', [GudangController::class, 'indexstoksediaan'])->name('indexstoksediaan');
+Route::get('/indexlogkartustok', [GudangController::class, 'indexlogkartustok'])->name('indexlogkartustok');
+Route::post('/cariobat', [GudangController::class, 'cariobat'])->name('cariobat');
+Route::post('/prosespo', [GudangController::class, 'prosespo'])->name('prosespo');
+Route::get('/cari-supplier', [GudangController::class, 'cariSupplier'])->name('cari-supplier');
+Route::post('/savepo', [GudangController::class, 'savepo'])->name('savepo');
+Route::post('/returpo', [GudangController::class, 'returpo'])->name('returpo');
+Route::post('/ambildatapo', [GudangController::class, 'ambildatapo'])->name('ambildatapo');
+Route::post('/ambildetailpo', [GudangController::class, 'ambildetailpo'])->name('ambildetailpo');
+Route::post('/ambildatalog', [GudangController::class, 'ambildatalog'])->name('ambildatalog');
+
+
+Route::get('/indexkasir', [KasirController::class, 'Index'])->name('indexkasir');
+Route::post('/prosesbarang', [KasirController::class, 'prosesbarang'])->name('prosesbarang');
+Route::post('/prosesbarangfinal', [KasirController::class, 'prosesbarangfinal'])->name('prosesbarangfinal');
+Route::post('/simpansesikasir', [KasirController::class, 'simpansesikasir'])->name('simpansesikasir');
+Route::post('/tutupsesikasir', [KasirController::class, 'tutupsesikasir'])->name('tutupsesikasir');
