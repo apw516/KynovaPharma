@@ -22,7 +22,7 @@
                          class="form-control form-control-sm nilai-asli" value="0" min="1">
                  </td>
                  <td>
-                     <button type="button" class="btn btn-primary btn-sm" onclick="bayar()"><i class="bi bi-cash-coin"
+                     <button type="button" class="btn btn-primary btn-sm btnbayar" onclick="bayar()"><i class="bi bi-cash-coin"
                              style="margin-right:3px"></i> Bayar</button>
                  </td>
              </tr>
@@ -131,6 +131,8 @@
                      })
                  } else {
                      spinner_off()
+                     $('.resetbarang').prop('disabled',true)
+                     $('.btnbayar').prop('disabled',true)
                      $('.v_kembalian').html(data.html);
                  }
              }

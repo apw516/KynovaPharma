@@ -27,8 +27,8 @@
                         <thead>
                             <tr>
                                 <th>Kode Barang</th>
+                                <th>Kategori</th>
                                 <th>Nama Barang</th>
-                                <th>Merk Dagang</th>
                                 <th>Produsen</th>
                                 <th>Satuan Besar</th>
                                 <th>Satuan Sedang</th>
@@ -58,14 +58,14 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">Nama Barang</label>
+                                    <label for="exampleInputEmail1" class="form-label">Kategori</label>
                                     <input type="text" placeholder="Masukan nama barang ..." class="form-control"
                                         id="namabarang" name="namabarang" aria-describedby="emailHelp">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">Merk Dagang</label>
+                                    <label for="exampleInputEmail1" class="form-label">Nama Barang</label>
                                     <input type="text" placeholder="Masukan nama merk dagang ..." class="form-control"
                                         id="merkdagang" name="merkdagang" aria-describedby="emailHelp">
                                 </div>

@@ -51,10 +51,22 @@ Route::post('/returpo', [GudangController::class, 'returpo'])->name('returpo');
 Route::post('/ambildatapo', [GudangController::class, 'ambildatapo'])->name('ambildatapo');
 Route::post('/ambildetailpo', [GudangController::class, 'ambildetailpo'])->name('ambildetailpo');
 Route::post('/ambildatalog', [GudangController::class, 'ambildatalog'])->name('ambildatalog');
+Route::post('/simpanretursediaan', [GudangController::class, 'simpanretursediaan'])->name('simpanretursediaan');
 
 
 Route::get('/indexkasir', [KasirController::class, 'Index'])->name('indexkasir');
+Route::get('/indexlogsesikasir', [KasirController::class, 'indexlogsesikasir'])->name('indexlogsesikasir');
+Route::get('/logtransaksikasir', [KasirController::class, 'logtransaksikasir'])->name('logtransaksikasir');
+Route::get('/indexriwayatpenjualan', [KasirController::class, 'indexriwayatpenjualan'])->name('indexriwayatpenjualan');
+Route::get('/indexlogtransaksistok', [KasirController::class, 'indexlogtransaksistok'])->name('indexlogtransaksistok');
 Route::post('/prosesbarang', [KasirController::class, 'prosesbarang'])->name('prosesbarang');
 Route::post('/prosesbarangfinal', [KasirController::class, 'prosesbarangfinal'])->name('prosesbarangfinal');
 Route::post('/simpansesikasir', [KasirController::class, 'simpansesikasir'])->name('simpansesikasir');
 Route::post('/tutupsesikasir', [KasirController::class, 'tutupsesikasir'])->name('tutupsesikasir');
+Route::post('/ambildatalogsesi', [KasirController::class, 'ambildatalogsesi'])->name('ambildatalogsesi');
+Route::post('/ambillogtransaksi', [KasirController::class, 'ambillogtransaksi'])->name('ambillogtransaksi');
+Route::post('/ambilriwayatpenjualan', [KasirController::class, 'ambilriwayatpenjualan'])->name('ambilriwayatpenjualan');
+Route::post('/ambildetailtransaksi', [KasirController::class, 'ambildetailtransaksi'])->name('ambildetailtransaksi');
+Route::post('/returheader', [KasirController::class, 'returheader'])->name('returheader');
+Route::post('/returdetail', [KasirController::class, 'returdetail'])->name('returdetail');
+Route::post('/ambilriwayatkartustok', [KasirController::class, 'ambilriwayatkartustok'])->name('ambilriwayatkartustok');

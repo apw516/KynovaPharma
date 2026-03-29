@@ -1,4 +1,4 @@
-<table class="table table-sm table-borderer table-hover">
+<table class="table table-sm table-borderer table-hover" id="tabelbarang">
     <thead>
         <th>Kode Barang</th>
         <th>Nama Obat</th>
@@ -27,7 +27,9 @@
         @endforeach
     </tbody>
 </table>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+
 <script>
     $(document).ready(function() {
         // 1. Ketika baris tabel diklik
@@ -48,7 +50,7 @@
                     <strong>${dagang}</strong><br>
                     <small class="text-muted">${nama}</small>
                     <input type="hidden" name="kode_barang" value="${kode}">
-                    <input type="hidden" name="nama_barang" value="${nama}">
+                    <input type="hidden" name="nama_barang" value="${dagang}">
                 </td>
                 <td>
                     <input type="text" name="qty" class="form-control form-control-sm" placeholder="jumlah ..." value="0" required>
@@ -115,5 +117,15 @@
             // 3. Masukkan ke hidden input di sebelahnya agar terkirim ke server
             $(this).siblings('.nilai-asli').val(angkaBersih);
         });
+    });
+    $(function() {
+        $("#tabelbarang").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "pageLength": 12,
+            "searching": true,
+            "ordering": false,
+        })
     });
 </script>

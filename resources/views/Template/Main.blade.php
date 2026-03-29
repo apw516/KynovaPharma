@@ -119,6 +119,11 @@
         .pagination {
             margin-top: 20px !important;
         }
+
+        .dataTables_filter {
+            margin-bottom: 15px;
+            /* Sesuaikan jaraknya */
+        }
     </style>
 </head>
 

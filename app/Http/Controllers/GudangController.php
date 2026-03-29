@@ -9,6 +9,8 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Medicine;
 use App\Models\model_log_transaksi_stok;
 use App\Models\model_sediaan_barang;
+use App\Models\model_ts_detail;
+use App\Models\model_ts_retur_sediaan;
 use App\Models\po_detail;
 use App\Models\po_header;
 use App\Models\Supplier;
@@ -67,7 +69,7 @@ class GudangController extends Controller
             $tgl_akhir = $request->tglakhir;
             $data = DB::table('log_transaksi_stok as a')
                 ->join('mt_barang as b', 'a.kode_barang', '=', 'b.kode_barang')
-                ->select('b.nama_dagang', 'b.nama_obat', 'b.produsen', 'a.*')
+                ->select('b.nama_dagang', 'b.nama_obat', 'b.produsen', 'a.*', 'b.satuan_besar', 'b.satuan_sedang', 'b.satuan_kecil', 'b.rasio_sedang', 'b.rasio_kecil')
                 ->whereBetween(DB::raw('DATE(a.tgl_input)'), [$tgl_awal, $tgl_akhir])
                 ->orderBy('a.id', 'DESC')
                 ->get();
@@ -166,6 +168,22 @@ class GudangController extends Controller
         try {
             $id = $request->id;
             $header = po_header::where('id', $id)->get();
+            $detail = po_detail::where('id_header', $id)->get();
+            foreach ($detail as $dd) {
+                $id_po_detail = $dd['id'];
+                $sediaan = model_sediaan_barang::where('id', $id_po_detail)->get();
+                foreach ($sediaan as $ss) {
+                    $penjualan_detail = model_ts_detail::where('id_sediaan', $ss['id'])->get();
+                    if (count($penjualan_detail) > 0) {
+                        $response = [
+                            'code' => 500,
+                            'message' => 'Retur Semua Gagagl ,Ada penjualan menggunakan barang dari PO ini !'
+                        ];
+                        echo json_encode($response);
+                        die;
+                    }
+                }
+            }
             if ($header[0]->status == 2) {
                 $response = [
                     'code' => 500,
@@ -175,7 +193,6 @@ class GudangController extends Controller
                 die;
             }
             po_header::where('id', $id)->update(['status' => 2]);
-            $detail = po_detail::where('id_header', $id)->get();
             foreach ($detail as $d) {
                 $kode_barang = $d->kode_barang;
                 $kode_batch = $d->no_batch;
@@ -387,7 +404,7 @@ class GudangController extends Controller
                     'no_batch' => $arr['kodebatch'],
                     'tgl_expired' => $arr['expireddate']
                 ];
-                po_detail::create($data_detail);
+                $po_detail = po_detail::create($data_detail);
                 //save ke tabel sediaan
                 $cek_sediaan = db::select('select id,stok_sekarang   from mt_sediaan_obat where kode_barang = ? and kode_supplier = ? and tgl_expired = ? and kode_batch = ? and harga_modal_satuan_besar = ?', [$arr['kode_barang'], $datasupplier['kodesupplier'], $arr['expireddate'], $arr['kodebatch'], $harganya]);
                 $mt_barang = db::select('select rasio_sedang,rasio_kecil from mt_barang where kode_barang = ?', [$arr['kode_barang']]);
@@ -397,29 +414,30 @@ class GudangController extends Controller
                 $harga_kecil = $harga_sedang / $rasio_kecil;
                 //konversi_kesatuan_kecil
                 $stok_masuk = $arr['qty'] * $rasio_sedang * $rasio_kecil;
-                if (count($cek_sediaan) == 0) {
-                    $datasediaan = [
-                        'kode_barang' => $arr['kode_barang'],
-                        'kode_supplier' => $datasupplier['kodesupplier'],
-                        'tgl_expired' => $arr['expireddate'],
-                        'harga_modal_satuan_besar' => $harganya,
-                        'harga_modal_satuan_sedang' => $harga_sedang,
-                        'harga_modal_satuan_kecil' => $harga_kecil,
-                        'kode_batch' => $arr['kodebatch'],
-                        'stok_awal' => 0,
-                        'stok_sekarang' => $stok_masuk,
-                        'tgl_input' => $this->get_now(),
-                    ];
-                    $datass = model_sediaan_barang::create($datasediaan);
-                    $id_sediaan = $datass->id;
-                } else {
-                    $dataupdate = [
-                        'stok_awal' => $cek_sediaan[0]->stok_sekarang,
-                        'stok_sekarang' => $cek_sediaan[0]->stok_sekarang + $stok_masuk
-                    ];
-                    model_sediaan_barang::where('id', $cek_sediaan[0]->id)->update($dataupdate);
-                    $id_sediaan  = $cek_sediaan[0]->id;
-                }
+                // if (count($cek_sediaan) == 0) {
+                $datasediaan = [
+                    'kode_barang' => $arr['kode_barang'],
+                    'kode_supplier' => $datasupplier['kodesupplier'],
+                    'tgl_expired' => $arr['expireddate'],
+                    'harga_modal_satuan_besar' => $harganya,
+                    'harga_modal_satuan_sedang' => $harga_sedang,
+                    'harga_modal_satuan_kecil' => $harga_kecil,
+                    'kode_batch' => $arr['kodebatch'],
+                    'stok_awal' => 0,
+                    'stok_sekarang' => $stok_masuk,
+                    'tgl_input' => $this->get_now(),
+                    'id_po_detail' => $po_detail->id
+                ];
+                $datass = model_sediaan_barang::create($datasediaan);
+                $id_sediaan = $datass->id;
+                // } else {
+                //     $dataupdate = [
+                //         'stok_awal' => $cek_sediaan[0]->stok_sekarang,
+                //         'stok_sekarang' => $cek_sediaan[0]->stok_sekarang + $stok_masuk
+                //     ];
+                //     model_sediaan_barang::where('id', $cek_sediaan[0]->id)->update($dataupdate);
+                //     $id_sediaan  = $cek_sediaan[0]->id;
+                // }
                 $last_log = db::table('log_transaksi_stok')
                     ->where('kode_barang', $arr['kode_barang'])
                     ->orderBy('id', 'desc')
@@ -455,6 +473,82 @@ class GudangController extends Controller
             ], 500);
         }
     }
+    public function simpanretursediaan(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $jumlahstoksekarang = $request->jumlahstoksekarang;
+            $idsediaan = $request->idsediaan;
+            $jumlahstokretur = $request->jumlahstokretur;
+            $alasanretur = $request->alasanretur;
+            if (strlen($jumlahstokretur) == 0) {
+                $response = [
+                    'code' => 500,
+                    'message' => 'Jumlah stok retur belum diisi ...'
+                ];
+                echo json_encode($response);
+                die;
+            }
+            $sediaan = model_sediaan_barang::where('id', $idsediaan)->first();
+            $id_po_detail = $sediaan->id_po_detail;
+            $po_detail = po_detail::where('id', $id_po_detail)->first();
+            $po_header = po_header::where('id', $po_detail->id_header)->first();
+            $kode_barang = $sediaan->kode_barang;
+            $kode_retur = $this->get_kode_retur();
+            $data_retur = [
+                'kode_retur' => $kode_retur,
+                'nomor_faktur' => $po_header->nomor_faktur,
+                'no_batch' => $sediaan->kode_batch,
+                'kode_barang' => $kode_barang,
+                'qty_retur' => $jumlahstokretur,
+                'id_sediaan' =>  $idsediaan,
+                'id_supplier' => $sediaan->kode_supplier,
+                'harga_modal_satuan_besar' => $sediaan->harga_modal_satuan_besar,
+                'harga_modal_satuan_sedang' => $sediaan->harga_modal_satuan_sedang,
+                'harga_modal_satuan_kecil' => $sediaan->harga_modal_satuan_kecil,
+                'pic' => auth()->user()->id,
+                'tgl_retur' => $this->get_now(),
+                'alasan_retur' => $alasanretur,
+                'ed' =>  $sediaan->tgl_expired,
+            ];
+            model_ts_retur_sediaan::create($data_retur);
+            $stok_sebelumnya = $sediaan->stok_sekarang;
+            $stok_sekarang = $stok_sebelumnya - $jumlahstokretur;
+            model_sediaan_barang::where('id', $idsediaan)->update(['stok_sekarang' => $stok_sekarang]);
+            $last_log = db::table('log_transaksi_stok')
+                ->where('kode_barang', $kode_barang)
+                ->orderBy('id', 'desc')
+                ->first();
+            $stok_awal_log = $last_log ? $last_log->stok_now : 0;
+            // 2. Siapkan data mutasi stok
+            $data_log = [
+                'id_dokumen'  =>  $kode_retur, // Menggunakan nomor PO sebagai referensi
+                'kode_barang'   => $kode_barang,
+                'stok_in'         => 0, // Sudah dalam satuan terkecil
+                'stok_out'        => $jumlahstokretur,
+                'stok_last'     => $stok_awal_log,
+                'stok_now'   => $stok_awal_log - $jumlahstokretur,
+                'tgl_input'       => $this->get_now(),
+                'keterangan'    => 'RETUR ( ' . $alasanretur . ' )',
+                'id_sediaan'       => $idsediaan // Mencatat siapa yang melakukan input
+            ];
+            model_log_transaksi_stok::create($data_log);
+            DB::commit();
+            $response = [
+                'code' => 200,
+                'message' => 'sukses'
+            ];
+            echo json_encode($response);
+            die;
+        } catch (\Exception $e) {
+            // JIKA TERJADI ERROR, BATALKAN SEMUA PROSES
+            DB::rollback();
+            return response()->json([
+                'code' => 500,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     public function get_now()
     {
         $dt = Carbon::now()->timezone('Asia/Jakarta');
@@ -470,5 +564,21 @@ class GudangController extends Controller
         $time = $dt->toTimeString();
         $now = $date;
         return $now;
+    }
+    public function get_kode_retur()
+    {
+        $q = DB::connection('mysql')->select('SELECT id,RIGHT(kode_retur,3) AS kd_max  FROM ts_retur_sediaan ORDER BY id DESC LIMIT 1');
+        $kd = "";
+        if (count($q) > 0) {
+            foreach ($q as $k) {
+                $tmp = ((int) $k->kd_max) + 1;
+                $kd = sprintf("%03s", $tmp);
+            }
+        } else {
+            $kd = "001";
+        }
+        date_default_timezone_set('Asia/Jakarta');
+
+        return 'RET' . $kd;
     }
 }

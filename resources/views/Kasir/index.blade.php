@@ -77,7 +77,9 @@
                         <div class="card-footer">
                             <button class="btn btn-success prosesbarang"><i class="bi bi-box-arrow-in-down"
                                     style="margin-right:4px"></i> Proses</button>
-                            <div class="v_proses mt-3"></div>
+                            <button class="btn btn-warning resetbarang"><i class="bi bi-arrow-clockwise"
+                                    style="margin-right:4px"></i> Reset</button>
+                            <div hidden class="v_proses mt-3"></div>
                         </div>
                     </div>
                 </div>
@@ -176,7 +178,7 @@
                         name: 'stok_terakhir',
                         className: 'text-center',
                         searchable: false, // Tambahkan ini
-                        orderable: false ,// Tambahkan ini agar tidak error saat di-klik judul kolomnya
+                        orderable: false, // Tambahkan ini agar tidak error saat di-klik judul kolomnya
                         render: function(data, type, row) {
                             let total = parseInt(data) || 0;
                             let rSedang = parseInt(row.rasio_sedang) || 1;
@@ -199,14 +201,14 @@
                             let hasil = [];
                             if (box > 0) hasil.push(
                                 `<span class="badge bg-primary">${box} ${row.satuan_besar}</span>`
-                                );
+                            );
                             if (strip > 0) hasil.push(
                                 `<span class="badge bg-info text-dark">${strip} ${row.satuan_sedang}</span>`
-                                );
+                            );
                             if (tablet > 0 || (box === 0 && strip === 0)) {
                                 hasil.push(
                                     `<span class="badge bg-secondary">${tablet} ${row.satuan_kecil}</span>`
-                                    );
+                                );
                             }
 
                             // Gabungkan dengan spasi atau koma
@@ -336,6 +338,21 @@
                 }
             });
         })
+        $('.resetbarang').on('click', function() {
+            $('.prosesbarang').removeAttr('disabled', true);
+            $('.v_proses').prop('hidden', true);
+            $('.hapus-baris').removeAttr('disabled', true);
+            $('.pilihbarang').removeAttr('disabled', true);
+            $('select[name="satuan"]').css({
+                "pointer-events": "auto",
+                "background-color": "#ffffff", // Warna abu-abu seperti disabled
+                "appearance": "none" // Menghilangkan panah dropdown (opsional)
+            });
+            $('.qty').removeAttr('readonly', true);
+            $('.diskontampilan').removeAttr('readonly', true);
+            // 4. Matikan tombol proses itu sendiri agar tidak diklik dua kali
+            $(this).removeAttr('disabled', true);
+        })
 
         function prosesbarang() {
             spinner_on()
@@ -369,6 +386,7 @@
                         })
                     } else {
                         $('.prosesbarang').prop('disabled', true);
+                        $('.v_proses').removeAttr('hidden', true);
                         $('.hapus-baris').prop('disabled', true);
                         $('.pilihbarang').prop('disabled', true);
                         $('select[name="satuan"]').css({

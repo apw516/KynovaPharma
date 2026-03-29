@@ -394,7 +394,9 @@ class DataMasterController extends Controller
         $id = $request->idbarang;
         $data_master = Medicine::where('id', $id)->get();
         $kode_barang = $data_master[0]->kode_barang;
-        $data_sediaan = model_sediaan_barang::with('supplier')->where('kode_barang', $kode_barang)
+        $data_sediaan = model_sediaan_barang::with('supplier')
+            ->select('id as idsediaan', 'kode_supplier', 'tgl_input', 'kode_batch', 'tgl_expired', 'stok_awal', 'stok_sekarang', 'harga_modal_satuan_kecil')
+            ->where('kode_barang', $kode_barang)
             ->orderBy('id', 'desc') // Mengurutkan berdasarkan ID terbaru
             ->get();
         $html = view('dataMaster.tabel_data_sediaan', compact(['data_sediaan', 'data_master']))->render();

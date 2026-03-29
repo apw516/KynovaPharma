@@ -36,31 +36,31 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('indexmasterbarang')}}"
+                    <a href="{{ route('indexlogsesikasir')}}"
                         class="nav-link @if ($menu == 'logsesikasir') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Log Sesi Kasir</p> <span class="badge text-bg-danger" style="margin-left:4px">On Proses</span></h3>
+                        <p>Log Sesi Kasir</p></h3>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('indexmasterbarang')}}"
+                    <a href="{{ route('logtransaksikasir')}}"
                         class="nav-link @if ($menu == 'logtransaksikasir') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Log Transaksi Kasir</p> <span class="badge text-bg-danger" style="margin-left:4px">On Proses</span></h3>
+                        <p>Log Transaksi Kasir</p></h3>
                     </a>
                 </li>
                    <li class="nav-item">
-                    <a href=""
+                    <a href="{{ route('indexriwayatpenjualan')}}"
                         class="nav-link @if ($menu == 'riwayatpenjualan') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Riwayat Penjualan</p> <span class="badge text-bg-danger" style="margin-left:4px">On Proses</span></h3>
+                        <p>Riwayat Penjualan</p> </h3>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href=""
+                    <a href="{{ route('indexlogtransaksistok')}}"
                         class="nav-link @if ($menu == 'logtransaksistok') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Log transaksi stok</p> <span class="badge text-bg-danger" style="margin-left:4px">On Proses</span></h3>
+                        <p>Riwayat Kartu Stok</p></h3>
                     </a>
                 </li>
                 <li class="nav-header">GUDANG</li>

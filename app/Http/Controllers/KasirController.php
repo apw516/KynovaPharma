@@ -34,6 +34,184 @@ class KasirController extends Controller
             'get_sesi'
         ]));
     }
+    public function indexlogsesikasir()
+    {
+        $now = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+        $date_start = $now->format('Y-m-d');
+        $date_end = $end->format('Y-m-d');
+        $menu = 'logsesikasir';
+        $date = $this->get_date2();
+        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+        return view('Kasir.indexlogsesikasir', compact([
+            'menu',
+            'date_start',
+            'date_end',
+            'get_sesi'
+        ]));
+    }
+    public function logtransaksikasir()
+    {
+        $now = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+        $date_start = $now->format('Y-m-d');
+        $date_end = $end->format('Y-m-d');
+        $menu = 'logtransaksikasir';
+        $date = $this->get_date2();
+        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+        return view('Kasir.indexlogtransaksikasir', compact([
+            'menu',
+            'date_start',
+            'date_end',
+            'get_sesi'
+        ]));
+    }
+    public function indexriwayatpenjualan()
+    {
+        $now = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+        $date_start = $now->format('Y-m-d');
+        $date_end = $end->format('Y-m-d');
+        $menu = 'riwayatpenjualan';
+        $date = $this->get_date2();
+        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+        return view('Kasir.indexriwayatpenjualan', compact([
+            'menu',
+            'date_start',
+            'date_end',
+            'get_sesi'
+        ]));
+    }
+    public function indexlogtransaksistok()
+    {
+        $now = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+        $date_start = $now->format('Y-m-d');
+        $date_end = $end->format('Y-m-d');
+        $menu = 'logtransaksistok';
+        $date = $this->get_date2();
+        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+        return view('Kasir.index_log_transaksi_stok', compact([
+            'menu',
+            'date_start',
+            'date_end',
+            'get_sesi'
+        ]));
+    }
+    public function ambildatalogsesi(Request $request)
+    {
+        $awal = $request->tglawal;
+        $tglakhir = $request->tglakhir;
+        $data = db::select('select a.*,b.nama from ts_sesi_kasir a inner join user b on a.id_user = b.id where date(a.tgl_sesi_kasir) BETWEEN ? and ? ORDER BY a.id DESC', [$awal, $tglakhir]);
+        $html = view('Kasir.tabel_log_kasir', compact(['data', 'awal', 'tglakhir']))->render();
+        $response = [
+            'code' => 200,
+            'view' => $html,
+            'message' => 'sukses'
+        ];
+        echo json_encode($response);
+        die;
+    }
+    public function ambillogtransaksi(Request $request)
+    {
+        $awal = $request->tglawal;
+        $tglakhir = $request->tglakhir;
+        $data = db::select('select a.*,d.`nama` from ts_penjualan_header a
+        inner join user d on a.`id_user` = d.id where date(a.`tgl_transaksi`) between ? AND ? ORDER BY a.id DESC', [$awal, $tglakhir]);
+        $html = view('Kasir.tabel_log_transaksi_kasir', compact(['data', 'awal', 'tglakhir']))->render();
+        $response = [
+            'code' => 200,
+            'view' => $html,
+            'message' => 'sukses'
+        ];
+        echo json_encode($response);
+        die;
+    }
+    public function ambilriwayatkartustok(Request $request)
+    {
+        $awal = $request->tglawal;
+        $tglakhir = $request->tglakhir;
+        $data = DB::table('log_transaksi_stok as a')
+            // 1. Join dengan subquery untuk mengambil ID terakhir per kode_barang
+            ->join(DB::raw('(SELECT MAX(id) as max_id FROM log_transaksi_stok GROUP BY kode_barang) as b_latest'), function ($join) {
+                $join->on('a.id', '=', 'b_latest.max_id');
+            })
+            // 2. Join dengan master barang untuk ambil nama/detail barang
+            ->join('mt_barang as b', 'a.kode_barang', '=', 'b.kode_barang')
+            ->select(
+                'b.nama_dagang',
+                'b.nama_obat',
+                'b.produsen',
+                'b.satuan_besar',
+                'b.satuan_sedang',
+                'b.satuan_kecil',
+                'b.rasio_sedang',
+                'b.rasio_kecil',
+                'a.*'
+            )
+            // 3. Filter tanggal (opsional jika ingin membatasi rentang log tertentu)
+            ->whereBetween(DB::raw('DATE(a.tgl_input)'), [$awal, $tglakhir])
+            ->orderBy('a.id', 'DESC')
+            ->get();
+        $html = view('Kasir.tabel_riwayat_stok', compact(['data', 'awal', 'tglakhir']))->render();
+        $response = [
+            'code' => 200,
+            'view' => $html,
+            'message' => 'sukses'
+        ];
+        echo json_encode($response);
+        die;
+    }
+    public function ambilriwayatpenjualan(Request $request)
+    {
+        $awal = $request->tglawal;
+        $tglakhir = $request->tglakhir;
+        $data = db::select('SELECT 
+        a.`no_invoice`
+        ,a.`tgl_transaksi`
+        ,c.`nama_dagang`
+        ,d.`nama`
+        ,b.`qty`
+        ,b.`subtotal`
+        ,b.`grandtotal`
+        ,b.`harga_jual`
+        ,b.`diskon` 
+        ,b.`status_retur`
+        ,c.`rasio_sedang`
+        ,c.`rasio_kecil`
+        ,c.`satuan_besar`
+        ,c.`satuan_sedang`
+        ,c.`satuan_kecil`
+        FROM ts_penjualan_header a
+        INNER JOIN ts_penjualan_detail b ON a.id = b.`id_header`
+        INNER JOIN mt_barang c ON b.`kode_barang` = c.`kode_barang`
+        INNER JOIN USER d ON a.`id_user` = d.id where date(a.`tgl_transaksi`) between ? AND ? ORDER BY a.id DESC', [$awal, $tglakhir]);
+        $html = view('Kasir.tabel_riwayat_penjualan', compact(['data', 'awal', 'tglakhir']))->render();
+        $response = [
+            'code' => 200,
+            'view' => $html,
+            'message' => 'sukses'
+        ];
+        echo json_encode($response);
+        die;
+    }
+    public function ambildetailtransaksi(Request $request)
+    {
+        $id = $request->id;
+        $tglakhir = $request->tglakhir;
+        $data = db::select('select b.id as iddetail ,c.`nama_dagang`,d.`nama`,b.`qty`,b.`subtotal`,b.`grandtotal`,b.`harga_jual`,b.`diskon`,b.status_retur from ts_penjualan_header a
+        inner join ts_penjualan_detail b on a.id = b.`id_header`
+        inner join mt_barang c on b.`kode_barang` = c.`kode_barang`
+        inner join user d on a.`id_user` = d.id where a.id = ? ORDER BY a.id DESC', [$id]);
+        $html = view('Kasir.tabel_detail_transaksi_kasir', compact(['data']))->render();
+        $response = [
+            'code' => 200,
+            'view' => $html,
+            'message' => 'sukses'
+        ];
+        echo json_encode($response);
+        die;
+    }
     public function prosesbarang(Request $request)
     {
         $data = json_decode($_POST['data'], true);
@@ -78,6 +256,122 @@ class KasirController extends Controller
         ];
         echo json_encode($response);
         die;
+    }
+    public function returheader(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $detail = model_ts_detail::where('id_header', $request->id)->where('status_retur', 1)->get();
+            $header = model_ts_header::where('id', $request->id)->first();
+            model_ts_header::where('id', $request->id)->update(['status' => 2, 'total_retur' => $header['total_harga']]);
+            model_ts_detail::where('id_header', $request->id)->update(['status_retur' => 2]);
+            $sesi_kasir = model_ts_sesi_kasir::where('id', $header->id_sesi_kasir)->first();
+            if ($sesi_kasir->status == 2) {
+                $total_hh = $header['total_harga'] - $header['total_retur'];
+                $saldo_akhir = $sesi_kasir->saldo_akhir - $total_hh;
+                model_ts_sesi_kasir::where('id', $header->id_sesi_kasir)->update(['saldo_akhir' => $saldo_akhir]);
+            }
+            foreach ($detail as $dd) {
+                $log_terakhir = DB::table('log_transaksi_stok')
+                    ->where('kode_barang', $dd->kode_barang)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                $mt_barang = Medicine::where('kode_barang', $dd->kode_barang)->first();
+                // Tentukan stok_last (jika log belum ada, ambil dari stok_now di mt_sediaan)
+                $stok_last = $log_terakhir->stok_now;
+                $stok_now = $stok_last + $dd->qty;
+                $data_log = [
+                    'id_dokumen' => $dd->id,
+                    'kode_barang' => $dd->kode_barang,
+                    'stok_in' => $dd->qty,
+                    'stok_out' => '0',
+                    'stok_last' => $stok_last,
+                    'stok_now' => $stok_now,
+                    'tgl_input' => $this->get_now(),
+                    'keterangan' => 'Retur Pembelian',
+                    'id_sediaan' => $dd->id_sediaan,
+                    'harga_jual' => $dd->harga_jual,
+                    'harga_modal' => $dd->harga_modal
+                ];
+                model_log_transaksi_stok::create($data_log);
+                $ss = model_sediaan_barang::where('id', $dd->id_sediaan)->first();
+                $stok_sediaan = $ss->stok_sekarang + $dd->qty;
+                model_sediaan_barang::where('id', $dd->id_sediaan)->update(['stok_sekarang' => $stok_sediaan]);
+            }
+            DB::commit();
+            $response = [
+                'code' => 200,
+                'view' => '',
+                'message' => 'sukses'
+            ];
+            echo json_encode($response);
+            die;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function returdetail(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $iddetail = $request->id;
+            $detail = model_ts_detail::where('id',  $iddetail)->first();
+            model_ts_detail::where('id', $iddetail)->update(['status_retur' => 2]);
+            $header = model_ts_header::where('id', $detail->id_header)->first();
+            $total_retur = $header->total_retur;
+            $log_terakhir = DB::table('log_transaksi_stok')
+                ->where('kode_barang', $detail->kode_barang)
+                ->orderBy('id', 'desc')
+                ->first();
+            // Tentukan stok_last (jika log belum ada, ambil dari stok_now di mt_sediaan)
+            $stok_last = $log_terakhir->stok_now;
+            $stok_now = $stok_last + $detail->qty;
+            $data_log = [
+                'id_dokumen' => $detail->id,
+                'kode_barang' => $detail->kode_barang,
+                'stok_in' => $detail->qty,
+                'stok_out' => '0',
+                'stok_last' => $stok_last,
+                'stok_now' => $stok_now,
+                'tgl_input' => $this->get_now(),
+                'keterangan' => 'Retur Pembelian',
+                'id_sediaan' => $detail->id_sediaan,
+                'harga_jual' => $detail->harga_jual,
+                'harga_modal' => $detail->harga_modal
+            ];
+            $ss = model_sediaan_barang::where('id', $detail->id_sediaan)->first();
+            $stok_sediaan = $ss->stok_sekarang + $detail->qty;
+            model_log_transaksi_stok::create($data_log);
+            model_sediaan_barang::where('id', $detail->id_sediaan)->update(['stok_sekarang' => $stok_sediaan]);
+            model_ts_header::where('id', $header->id)->update(['total_retur' => $total_retur + $detail->grandtotal]);
+            $header2 = model_ts_header::where('id', $detail->id_header)->first();
+            if ($header2->total_retur == $header->total_bayar) {
+                model_ts_header::where('id', $header->id)->update(['status' => 2]);
+            }
+            $sesi_kasir = model_ts_sesi_kasir::where('id', $header2->id_sesi_kasir)->first();
+            if ($sesi_kasir->status == 2) {
+                $saldo_akhir = $sesi_kasir->saldo_akhir - $detail->grandtotal;
+                model_ts_sesi_kasir::where('id', $header->id_sesi_kasir)->update(['saldo_akhir' => $saldo_akhir]);
+            }
+            DB::commit();
+            $response = [
+                'code' => 200,
+                'view' => '',
+                'message' => 'sukses'
+            ];
+            echo json_encode($response);
+            die;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'code' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
     public function get_now()
     {
@@ -172,7 +466,7 @@ class KasirController extends Controller
                         $sediaan->stok_sekarang -= $qty_dibutuhkan;
                         $sediaan->save();
                         // Catat log transaksi (ambil $qty_dibutuhkan)
-                        $this->catatLog($sediaan->id, $qty_dibutuhkan, $header->id,$diskon);
+                        $this->catatLog($sediaan->id, $qty_dibutuhkan, $header->id, $diskon);
                         $qty_dibutuhkan = 0; // Kebutuhan terpenuhi
                     } else {
                         // Jika stok di batch ini tidak cukup, ambil semua yang ada
@@ -181,7 +475,7 @@ class KasirController extends Controller
                         $sediaan->stok_sekarang = 0; // Habiskan stok batch ini
                         $sediaan->save();
                         // Catat log transaksi (ambil sebesar $ambil)
-                        $this->catatLog($sediaan->id, $ambil, $header->id,$diskon);
+                        $this->catatLog($sediaan->id, $ambil, $header->id, $diskon);
                     }
                 }
                 if ($qty_dibutuhkan > 0) {
@@ -198,7 +492,7 @@ class KasirController extends Controller
                     die;
                 }
             }
-            model_ts_header::where('id', $header->id)->update(['status' => 0]);
+            model_ts_header::where('id', $header->id)->update(['status' => 1]);
             $html = view('Kasir.view_kembalian', compact(['gt', 'uang']))->render();
             DB::commit();
             $response = [
@@ -210,14 +504,13 @@ class KasirController extends Controller
             die;
         } catch (\Exception $e) {
             DB::rollBack();
-
             return response()->json([
                 'code' => 500,
                 'message' => $e->getMessage()
             ]);
         }
     }
-    public function catatLog($idsediaan, $qty_dibutuhkan, $id,$diskon)
+    public function catatLog($idsediaan, $qty_dibutuhkan, $id, $diskon)
     {
         $get_sediaan = model_sediaan_barang::where('id', $idsediaan)->first();
         $log_terakhir = DB::table('log_transaksi_stok')
@@ -290,9 +583,11 @@ class KasirController extends Controller
     public function tutupsesikasir(Request $request)
     {
         $id = $request->id;
-        $ts_header = db::select('select sum(total_harga ) as total from ts_penjualan_header where id_sesi_kasir = ?', [$id]);
+        $ts_header = db::select('select sum(total_harga ) as total,sum(total_retur) as total_retur from ts_penjualan_header where id_sesi_kasir = ?', [$id]);
+        $awal = model_ts_sesi_kasir::where('id', $id)->first();
+        $saldo_awal = $awal->saldo_awal;
         $data = [
-            'saldo_akhir' => $ts_header[0]->total,
+            'saldo_akhir' => $ts_header[0]->total + $saldo_awal - $ts_header[0]->total_retur,
             'status' => 2
         ];
         model_ts_sesi_kasir::where('id', $id)->update($data);
