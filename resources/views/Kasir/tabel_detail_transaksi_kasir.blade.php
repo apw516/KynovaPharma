@@ -1,4 +1,4 @@
-<table id="tabellog" class="table table-sm table-bordered table-hover table-striped">\
+<table id="tabellog" class="table table-sm table-bordered table-hover table-striped">
     <thead>
         <th>Nama Barang</th>
         <th>qty</th>

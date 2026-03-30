@@ -32,6 +32,21 @@ class GudangController extends Controller
             'date_end'
         ]));
     }
+    public function indexstokretur()
+    {
+        $now = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+        $date_start = $now->format('Y-m-d');
+        $date_end = $end->format('Y-m-d');
+        $menu = 'stokretur';
+        $satuan = db::select('select * from mt_satuan');
+        return view('Gudang.index_stok_retur', compact([
+            'menu',
+            'satuan',
+            'date_start',
+            'date_end'
+        ]));
+    }
     public function indexlogkartustok()
     {
         $now = Carbon::now()->startOfMonth();
@@ -61,6 +76,40 @@ class GudangController extends Controller
             'date_start',
             'date_end'
         ]));
+    }
+    public function ambildatastokretur(Request $request)
+    {
+        try {
+            $tgl_awal = $request->tglawal;
+            $tgl_akhir = $request->tglakhir;
+            $data = DB::table('ts_retur_sediaan as a')
+                ->join('mt_barang as b', 'a.kode_barang', '=', 'b.kode_barang')
+                ->join('mt_supplier as c', 'a.id_supplier', '=', 'c.kode_supplier')
+                ->select('b.nama_dagang', 'b.nama_obat', 'b.produsen', 'a.*', 'b.satuan_besar', 'b.satuan_sedang', 'b.satuan_kecil', 'b.rasio_sedang', 'b.rasio_kecil','c.nama_supplier')
+                ->whereBetween(DB::raw('DATE(a.tgl_retur)'), [$tgl_awal, $tgl_akhir])
+                ->orderBy('a.id', 'DESC')
+                ->get();
+            // 3. Cek apakah data ada
+            if ($data->isEmpty()) {
+                return response()->json([
+                    'kode' => 500,
+                    'message' => 'Tidak ada data ditemukan pada periode tersebut.'
+                ]);
+            }
+            // 4. Render partial view menjadi string HTML
+            // Kita kirim data ke file blade khusus untuk baris tabel
+            $view = view('Gudang.tabel_stok_retur', compact('data'))->render();
+            return response()->json([
+                'kode' => 200,
+                'message' => 'Data berhasil dimuat.',
+                'view' => $view
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'kode' => 500,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
+        }
     }
     public function ambildatalog(Request $request)
     {

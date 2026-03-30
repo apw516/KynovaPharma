@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataMasterController;
 use App\Http\Controllers\GudangController;
 use App\Http\Controllers\KasirController;
+use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'Index'])->middleware('guest');
@@ -43,6 +44,7 @@ Route::post('/simpanhargajual', [DataMasterController::class, 'simpanhargajual']
 Route::get('/indexpurchaseorder', [GudangController::class, 'Index'])->name('indexpurchaseorder');
 Route::get('/indexstoksediaan', [GudangController::class, 'indexstoksediaan'])->name('indexstoksediaan');
 Route::get('/indexlogkartustok', [GudangController::class, 'indexlogkartustok'])->name('indexlogkartustok');
+Route::get('/indexstokretur', [GudangController::class, 'indexstokretur'])->name('indexstokretur');
 Route::post('/cariobat', [GudangController::class, 'cariobat'])->name('cariobat');
 Route::post('/prosespo', [GudangController::class, 'prosespo'])->name('prosespo');
 Route::get('/cari-supplier', [GudangController::class, 'cariSupplier'])->name('cari-supplier');
@@ -52,6 +54,8 @@ Route::post('/ambildatapo', [GudangController::class, 'ambildatapo'])->name('amb
 Route::post('/ambildetailpo', [GudangController::class, 'ambildetailpo'])->name('ambildetailpo');
 Route::post('/ambildatalog', [GudangController::class, 'ambildatalog'])->name('ambildatalog');
 Route::post('/simpanretursediaan', [GudangController::class, 'simpanretursediaan'])->name('simpanretursediaan');
+Route::post('/ambildatastokretur', [GudangController::class, 'ambildatastokretur'])->name('ambildatastokretur');
+
 
 
 Route::get('/indexkasir', [KasirController::class, 'Index'])->name('indexkasir');
@@ -70,3 +74,16 @@ Route::post('/ambildetailtransaksi', [KasirController::class, 'ambildetailtransa
 Route::post('/returheader', [KasirController::class, 'returheader'])->name('returheader');
 Route::post('/returdetail', [KasirController::class, 'returdetail'])->name('returdetail');
 Route::post('/ambilriwayatkartustok', [KasirController::class, 'ambilriwayatkartustok'])->name('ambilriwayatkartustok');
+
+
+Route::get('/indexlaporansesikasir', [LaporanController::class, 'indexlaporansesikasir'])->name('indexlaporansesikasir');
+Route::get('/indexlaporantransaksipenjualan', [LaporanController::class, 'Index'])->name('indexlaporantransaksipenjualan');
+Route::get('/indexlaporanstokpersediaan', [LaporanController::class, 'indexlaporanstokpersediaan'])->name('indexlaporanstokpersediaan');
+Route::get('/indexlaporanpo', [LaporanController::class, 'indexlaporanpo'])->name('indexlaporanpo');
+Route::get('/indexlaporanstokretur', [LaporanController::class, 'indexlaporanstokretur'])->name('indexlaporanstokretur');
+Route::get('/indexlaporanlogkartustok', [LaporanController::class, 'indexlaporanlogkartustok'])->name('indexlaporanlogkartustok');
+Route::get('/indexlaporandatapenjualan', [LaporanController::class, 'indexlaporandatapenjualan'])->name('indexlaporandatapenjualan');
+Route::post('/ambillaporantransaksipenjualan', [LaporanController::class, 'ambillaporantransaksipenjualan'])->name('ambillaporantransaksipenjualan');
+Route::post('/ambildetaillaporantransaksi', [LaporanController::class, 'ambildetaillaporantransaksi'])->name('ambildetaillaporantransaksi');
+Route::post('/ambildatapurchaseorder', [LaporanController::class, 'ambildatapurchaseorder'])->name('ambildatapurchaseorder');
+Route::post('/ambildatalaporansesikasir', [LaporanController::class, 'ambildatalaporansesikasir'])->name('ambildatalaporansesikasir');

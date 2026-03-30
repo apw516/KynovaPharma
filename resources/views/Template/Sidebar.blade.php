@@ -79,6 +79,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('indexstokretur')}}"
+                        class="nav-link @if ($menu == 'stokretur') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Stok Retur </p> </h3>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('indexlogkartustok')}}"
                         class="nav-link @if ($menu == 'logkartustok') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
@@ -87,24 +94,52 @@
                 </li>
                 <li class="nav-header">LAPORAN</li>
                 <li class="nav-item">
-                    <a href="{{ route('indexmasterbarang')}}"
+                    <a href="{{ route('indexlaporansesikasir')}}"
+                        class="nav-link @if ($menu == 'laporansesikasir') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Laporan Sesi Kasir</p></h3>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('indexlaporantransaksipenjualan')}}"
                         class="nav-link @if ($menu == 'transaksipenjualan') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Transaki Penjualan</p> <span class="badge text-bg-danger" style="margin-left:4px">On Proses</span></h3>
+                        <p>Transaki Penjualan</p></h3>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('indexmasterbarang')}}"
+                    <a href="{{ route('indexlaporandatapenjualan')}}"
                         class="nav-link @if ($menu == 'datapenjualan') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Data Penjualan</p> <span class="badge text-bg-danger" style="margin-left:4px">On Proses</span></h3>
+                        <p>Laporan Data Penjualan</p></h3>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('indexmasterbarang')}}"
+                    <a href="{{ route('indexlaporanpo')}}"
                         class="nav-link @if ($menu == 'laporanpurchaseorder') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Laporan Purhcase Order</p> <span class="badge text-bg-danger" style="margin-left:4px">On Proses</span></h3>
+                        <p>Laporan Purhcase Order</p></h3>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('indexlaporanlogkartustok')}}"
+                        class="nav-link @if ($menu == 'laporanlogkartustok') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Laporan Log Kartu Stok</p></h3>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('indexlaporanstokretur')}}"
+                        class="nav-link @if ($menu == 'laporanstokretur') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Laporan Stok Retur</p></h3>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('indexlaporanstokpersediaan')}}"
+                        class="nav-link @if ($menu == 'laporanstokpersediaan') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Laporan Stok Tersedia</p></h3>
                     </a>
                 </li>
                 <li class="nav-header">DATA MASTER</li>

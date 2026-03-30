@@ -155,21 +155,66 @@
 </div>
 <script>
     $(function() {
-        $("#tabelstok").DataTable({
+        var table = $("#tabelstok").DataTable({
             "responsive": true,
             "lengthChange": true,
             "pageLength": 10,
             "order": [
                 [0, "desc"]
-            ], // Default urutkan dari waktu terbaru
-            "dom": "<'row mb-3'<'col-md-6'l><'col-md-6'f>>rt<'row mt-3'<'col-md-5'i><'col-md-7'p>>",
+            ],
+            // Layout DOM dengan tombol download di kanan atas
+            "dom": "<'row mb-3'<'col-md-4'l><'col-md-8 d-flex justify-content-end align-items-center'f B>>" +
+                "<'row'<'col-md-12'tr>>" +
+                "<'row mt-3'<'col-md-5'i><'col-md-7'p>>",
+            "buttons": [{
+                    extend: 'excelHtml5',
+                    text: '<i class="bi bi-file-earmark-excel me-1"></i> Excel',
+                    className: 'btn btn-success btn-sm border-0 shadow-sm mx-1',
+                    title: 'Log_Mutasi_Stok_' + new Date().getTime(),
+                    exportOptions: {
+                        columns: ':visible',
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Membersihkan tag HTML <br> menjadi spasi agar rapi di Excel
+                                return node.innerText || node.textContent;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="bi bi-file-earmark-pdf me-1"></i> PDF',
+                    className: 'btn btn-danger btn-sm border-0 shadow-sm mx-1',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    title: 'Log Mutasi Stok Barang',
+                    exportOptions: {
+                        columns: ':visible',
+                        format: {
+                            body: function(data, row, column, node) {
+                                return node.innerText || node.textContent;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="bi bi-printer me-1"></i> Cetak',
+                    className: 'btn btn-dark btn-sm border-0 shadow-sm mx-1',
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                }
+            ],
             "language": {
                 "search": "",
                 "searchPlaceholder": "Cari mutasi stok...",
-                "lengthMenu": "_MENU_ data per halaman"
+                "lengthMenu": "_MENU_",
+                "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ log"
             }
         });
-        // Percantik kolom pencarian
+
+        // Percantik input pencarian
         $('.dataTables_filter input').addClass('form-control border-0 bg-light shadow-none px-3 py-2');
     });
 </script>

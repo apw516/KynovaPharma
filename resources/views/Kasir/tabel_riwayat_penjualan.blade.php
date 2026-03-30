@@ -1,102 +1,37 @@
-{{-- <table id="tabelriwayatpenjualan" class="table table-sm table-bordered table-hover table-striped">
-    <thead>
-        <th>Tgl transaksi</th>
-        <th>No Invoice</th>
-        <th>Nama Barang</th>
-        <th>Qty</th>
-        <th>Harga</th>
-        <th>Subtotal</th>
-        <th>Diskon</th>
-        <th>Grandtotal</th>
-        <th>Status</th>
-    </thead>
-    <tbody>
-        @foreach ($data as $d)
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($d->tgl_transaksi)->format('d-m-Y') }}</td>
-                <td>{{ $d->no_invoice }}</td>
-                <td>{{ $d->nama_dagang }} *( 1 {{ $d->satuan_besar }} / {{ $d->rasio_sedang }} {{ $d->satuan_sedang }} /
-                    {{ $d->rasio_kecil }} {{ $d->satuan_kecil }})</td>
-                <td>
-                    @php
-                        $sisa = $d->qty;
-                        $hasil_detail = [];
-
-                        // 1. Hitung Satuan Besar (misal: Pak)
-                        $jml_besar = floor($sisa / ($d->rasio_sedang * $d->rasio_kecil));
-                        if ($jml_besar > 0) {
-                            $hasil_detail[] = $jml_besar . ' ' . $d->satuan_besar;
-                            $sisa %= $d->rasio_sedang * $d->rasio_kecil;
-                        }
-
-                        // 2. Hitung Satuan Sedang (misal: Strip)
-                        $jml_sedang = floor($sisa / $d->rasio_kecil);
-                        if ($jml_sedang > 0) {
-                            $hasil_detail[] = $jml_sedang . ' ' . $d->satuan_sedang;
-                            $sisa %= $d->rasio_kecil;
-                        }
-
-                        // 3. Hitung Satuan Kecil (misal: Tablet/Pcs)
-                        if ($sisa > 0) {
-                            $hasil_detail[] = $sisa . ' ' . $d->satuan_kecil;
-                        }
-                    @endphp
-                    @if (count($hasil_detail) > 0)
-                        {!! implode('<br>', $hasil_detail) !!}
-                        <hr class="my-1">
-                        <small class="text-muted">(Total: {{ $d->qty }} {{ $d->satuan_kecil }})</small>
-                    @else
-                        0 {{ $d->satuan_kecil }}
-                    @endif
-                </td>
-                <td>Rp {{ number_format($d->harga_jual, 0, ',', '.') }}</td>
-                <td>Rp {{ number_format($d->subtotal, 0, ',', '.') }}</td>
-                <td>Rp {{ number_format($d->diskon, 0, ',', '.') }}</td>
-                <td>Rp {{ number_format($d->grandtotal, 0, ',', '.') }}</td>
-                <td>
-                    @if ($d->status_retur == 2)
-                        Retur
-                        <i class="bi bi-x text-danger"></i>
-                    @else
-                        OK <i class="bi bi-hand-thumbs-up text-success"></i>
-                    @endif
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
-<script>
-    $(function() {
-        $("#tabelriwayatpenjualan").DataTable({
-            "responsive": true,
-            "lengthChange": false,
-            "autoWidth": false,
-            "pageLength": 12,
-            "searching": true,
-            "ordering": false,
-        })
-    });
-</script> --}}
 <style>
+    /* Menggunakan Font yang lebih modern untuk angka keuangan */
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap');
+
     #tabelriwayatpenjualan thead th {
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-        border-bottom: 2px solid #dee2e6;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 15px 10px;
+        border: none;
     }
 
-    #tabelriwayatpenjualan tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05) !important;
-        transition: 0.3s;
+    #tabelriwayatpenjualan tbody td {
+        font-size: 0.85rem;
+        padding: 12px 10px;
     }
 
     .text-end {
-        font-family: 'Courier New', Courier, monospace;
-        /* Font monospaced agar angka sejajar */
-        font-weight: 500;
+        font-family: 'JetBrains Mono', monospace;
+        /* Lebih rapi dari Courier */
+        font-size: 0.85rem;
     }
 
-    .badge {
-        font-weight: 500;
+    /* Efek hover lembut */
+    #tabelriwayatpenjualan tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.04) !important;
+        transition: 0.2s ease-in-out;
+    }
+
+    /* Memperbaiki tampilan badge qty agar tidak terlalu mencolok */
+    .badge.bg-light {
+        font-weight: 600;
+        color: #444 !important;
+        border: 1px solid #ddd !important;
     }
 </style>
 <table id="tabelriwayatpenjualan" class="table table-hover table-striped align-middle" style="width:100%">
@@ -165,3 +100,48 @@
         @endforeach
     </tbody>
 </table>
+<script>
+    $(function() {
+        $("#tabelriwayatpenjualan").DataTable({
+            "responsive": true,
+            "lengthChange": true,
+            "autoWidth": false,
+            "pageLength": 10,
+            "order": [
+                [0, "desc"]
+            ], // Urutkan transaksi terbaru di atas
+            "dom": "<'row mb-3'<'col-md-6'l><'col-md-6 d-flex justify-content-end align-items-center'f B>>" +
+                "<'row'<'col-md-12'tr>>" +
+                "<'row mt-3'<'col-md-5'i><'col-md-7'p>>",
+            "buttons": [{
+                    extend: 'excel',
+                    text: '<i class="bi bi-file-earmark-excel"></i> Excel',
+                    className: 'btn btn-success btn-sm ms-2 shadow-sm'
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="bi bi-file-earmark-pdf"></i> PDF',
+                    className: 'btn btn-danger btn-sm ms-2 shadow-sm'
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="bi bi-printer"></i> Cetak',
+                    className: 'btn btn-dark btn-sm ms-2 shadow-sm'
+                }
+            ],
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Cari invoice atau barang...",
+                "lengthMenu": "_MENU_ data per halaman",
+                "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                "paginate": {
+                    "next": '<i class="bi bi-chevron-right"></i>',
+                    "previous": '<i class="bi bi-chevron-left"></i>'
+                }
+            }
+        });
+
+        // Percantik Input Search
+        $('.dataTables_filter input').addClass('form-control border-0 bg-light px-3 shadow-none');
+    });
+</script>
