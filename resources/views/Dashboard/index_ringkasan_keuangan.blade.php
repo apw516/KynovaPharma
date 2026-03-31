@@ -4,12 +4,12 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Log Sesi Kasir</h3>
+                    <h3 class="mb-0">Ringkasan Keuangan</h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Log Sesi Kasir</li>
+                        <li class="breadcrumb-item active" aria-current="page">Ringkasan Keuangan</li>
                     </ol>
                 </div>
             </div>
@@ -17,36 +17,31 @@
     </div>
     <div class="app-content">
         <div class="container-fluid">
-            <div class="card">
-                <div class="card-header">Tentukan Range Tanggal</div>
+            <div class="card mt-3">
+                <div class="card-header">Data Ringkasan Keuangan</div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Tanggal Awal</label>
-                                <input @if(auth()->user()->hak_akses != 1) readonly @endif type="date" class="form-control" id="tanggalawal" aria-describedby="emailHelp"
-                                    value="{{ $skrg }}">
+                                <input type="date" class="form-control" id="tanggalawal" aria-describedby="emailHelp"
+                                    value="{{ $date_start }}">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Tanggal Akhir</label>
-                                <input @if(auth()->user()->hak_akses != 1) readonly @endif type="date" class="form-control" id="tanggalakhir" aria-describedby="emailHelp"
-                                    value="{{ $skrg }}">
+                                <input type="date" class="form-control" id="tanggalakhir" aria-describedby="emailHelp"
+                                    value="{{ $date_end }}">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <button class="btn btn-success" style="margin-top:32px" onclick="ambildatalog()"><i
-                                    class="bi bi-search" style="margin-right:12px"></i> Tampilkan Riwayat</button>
+                                    class="bi bi-search" style="margin-right:12px"></i> Tampilkan Ringkasan</button>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">Tabel Log Sesi Kasir</div>
-                        <div class="card-body">
-                            <div id="vtr" class="vtr">
+                    <div class="V_data_log mt-2">
 
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -70,7 +65,7 @@
                     tglawal,
                     tglakhir
                 },
-                url: '<?= route('ambildatalogsesi') ?>',
+                url: '<?= route('ambilringkasankeuangan') ?>',
                 error: function(data) {
                     spinner_off()
                     Swal.fire({
@@ -82,7 +77,7 @@
                 },
                 success: function(data) {
                     spinner_off()
-                    if (data.code == 500) {
+                    if (data.kode == 500) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Oopss...',
@@ -100,7 +95,7 @@
 
                         // Gunakan .html() bukan .val() untuk merender HTML di dalam elemen
                         // Pastikan .v_d_t_r adalah class milik <tbody> tabel Anda
-                        $('.vtr').html(data.view);
+                        $('.V_data_log').html(data.view);
                     }
                 }
             });

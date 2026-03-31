@@ -77,6 +77,21 @@ class GudangController extends Controller
             'date_end'
         ]));
     }
+    public function indexdatastokpersediaan()
+    {
+        $now = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+        $date_start = $now->format('Y-m-d');
+        $date_end = $end->format('Y-m-d');
+        $menu = 'indexstokpersediaan';
+        $satuan = db::select('select * from mt_satuan');
+        return view('Gudang.index_data_persediaan', compact([
+            'menu',
+            'satuan',
+            'date_start',
+            'date_end'
+        ]));
+    }
     public function ambildatastokretur(Request $request)
     {
         try {
@@ -85,7 +100,7 @@ class GudangController extends Controller
             $data = DB::table('ts_retur_sediaan as a')
                 ->join('mt_barang as b', 'a.kode_barang', '=', 'b.kode_barang')
                 ->join('mt_supplier as c', 'a.id_supplier', '=', 'c.kode_supplier')
-                ->select('b.nama_dagang', 'b.nama_obat', 'b.produsen', 'a.*', 'b.satuan_besar', 'b.satuan_sedang', 'b.satuan_kecil', 'b.rasio_sedang', 'b.rasio_kecil','c.nama_supplier')
+                ->select('b.nama_dagang', 'b.nama_obat', 'b.produsen', 'a.*', 'b.satuan_besar', 'b.satuan_sedang', 'b.satuan_kecil', 'b.rasio_sedang', 'b.rasio_kecil', 'c.nama_supplier')
                 ->whereBetween(DB::raw('DATE(a.tgl_retur)'), [$tgl_awal, $tgl_akhir])
                 ->orderBy('a.id', 'DESC')
                 ->get();
@@ -99,6 +114,54 @@ class GudangController extends Controller
             // 4. Render partial view menjadi string HTML
             // Kita kirim data ke file blade khusus untuk baris tabel
             $view = view('Gudang.tabel_stok_retur', compact('data'))->render();
+            return response()->json([
+                'kode' => 200,
+                'message' => 'Data berhasil dimuat.',
+                'view' => $view
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'kode' => 500,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
+        }
+    }
+    public function ambilstokpersediaanbarang(Request $request)
+    {
+        try {
+            $data = DB::table('mt_sediaan_obat as a')
+                ->join('mt_barang as b', 'a.kode_barang', '=', 'b.kode_barang')
+                ->join('mt_supplier as c', 'a.kode_supplier', '=', 'c.kode_supplier')
+                ->join('ts_po_detail as d', 'a.id_po_detail', '=', 'd.id')
+                ->join('ts_po_header as e', 'd.id_header', '=', 'e.id')
+                ->select(
+                    'e.nomor_faktur',
+                    'e.tanggal_pembelian',
+                    'e.tanggal_faktur',
+                    'a.*',
+                    'b.nama_dagang',
+                    'b.nama_obat',
+                    'b.harga_modal',
+                    'c.nama_supplier',
+                    'b.produsen',
+                    'b.satuan_besar',
+                    'b.satuan_sedang',
+                    'b.satuan_kecil',
+                    'b.rasio_sedang',
+                    'b.rasio_kecil'
+                )
+                ->where('a.stok_sekarang', '>', 0)
+                ->get(); // Di sini baru gunakan ->get()
+            // 3. Cek apakah data ada
+            if ($data->isEmpty()) {
+                return response()->json([
+                    'kode' => 500,
+                    'message' => 'Tidak ada data ditemukan pada periode tersebut.'
+                ]);
+            }
+            // 4. Render partial view menjadi string HTML
+            // Kita kirim data ke file blade khusus untuk baris tabel
+            $view = view('Gudang.tabel_stok_persediaan_barang', compact('data'))->render();
             return response()->json([
                 'kode' => 200,
                 'message' => 'Data berhasil dimuat.',
@@ -278,6 +341,28 @@ class GudangController extends Controller
                 ];
                 model_log_transaksi_stok::create($data_log);
             }
+            DB::commit();
+            $response = [
+                'code' => 200,
+                'message' => 'sukses'
+            ];
+            echo json_encode($response);
+            die;
+        } catch (\Exception $e) {
+            // JIKA TERJADI ERROR, BATALKAN SEMUA PROSES
+            DB::rollback();
+            return response()->json([
+                'code' => 500,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function bayarpo(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $id = $request->id;
+            po_header::where('id', $id)->update(['status_bayar' => 1]);
             DB::commit();
             $response = [
                 'code' => 200,

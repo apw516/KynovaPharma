@@ -16,6 +16,58 @@
         </div>
     </div>
     <div class="app-content">
+        <div class="container-fluid mt-3 mb-3">
+            <div class="row g-3">
+                {{-- Alert Stok Expired (Tetap seperti sebelumnya) --}}
+                @if ($notif_ed > 0)
+                    <div class="col-md-6">
+                        <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center py-3 mb-0"
+                            role="alert">
+                            <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                style="width: 45px; height: 45px;">
+                                <i class="bi bi-exclamation-octagon-fill fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="alert-heading fw-bold mb-1">Perhatian: Sediaan Kadaluwarsa</h6>
+                                <p class="mb-0 small">
+                                    Terdapat <strong>{{ $notif_ed }} item</strong> yang akan expired dalam waktu dekat (
+                                    < 90 hari). <a href="{{ route('indexdatastokpersediaan') }}"
+                                        class="fw-bold text-danger text-decoration-underline ms-1">Lihat Detail</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Alert Hutang Gabungan --}}
+                @if ($notif_hutang > 0)
+                    <div class="col-md-6">
+                        <div class="alert {{ $overdue_count > 0 ? 'alert-danger' : 'alert-warning' }} border-0 shadow-sm d-flex align-items-center py-3 mb-0"
+                            role="alert">
+                            <div class="{{ $overdue_count > 0 ? 'bg-danger' : 'bg-warning' }} text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                style="width: 45px; height: 45px;">
+                                <i
+                                    class="bi {{ $overdue_count > 0 ? 'bi-exclamation-triangle-fill' : 'bi-cash-stack' }} fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="alert-heading fw-bold mb-1">
+                                    {{ $overdue_count > 0 ? 'Peringatan: Hutang Menunggak!' : 'Peringatan: Tagihan PO' }}
+                                </h6>
+                                <p class="mb-0 small">
+                                    Terdapat <strong>{{ $notif_hutang }} tagihan</strong> belum lunas.
+                                    @if ($overdue_count > 0)
+                                        <span class="badge bg-white text-danger ms-1">{{ $overdue_count }} Lewat Jatuh
+                                            Tempo</span>
+                                    @endif
+                                    <a href="{{ route('indexpurchaseorder') }}"
+                                        class="fw-bold text-decoration-underline ms-1 text-dark">Selesaikan Pembayaran</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
         @if (count($get_sesi) == 0)
             <div class="container-fluid">
                 Tidak ada sesi kasir yang dimulai ... <br>
@@ -23,10 +75,12 @@
                         class="bi bi-node-plus" style="margin-right:4px"></i> Mulai Sesi Kasir</button>
             </div>
         @else
+        <div class="container-fluid">
             <input hidden type="text" class="form-control" value="{{ $get_sesi[0]->id }}" id="id_sesi_kasir">
             ID Sesi Kasir : {{ $get_sesi[0]->id }} <br>
             Tanggal Sesi Kasi : {{ $get_sesi[0]->tgl_sesi_kasir }} <button style="margin-left:10px"
                 class="btn btn-sm btn-secondary" onclick="tutupsesikasir()">Tutup</button>
+        </div>
         @endif
         <div @if (count($get_sesi) == 0) hidden @endif class="container-fluid">
             <div class="card mt-3">

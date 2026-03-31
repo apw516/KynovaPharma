@@ -24,15 +24,15 @@
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Tanggal Awal</label>
-                                <input type="date" class="form-control" id="tanggalawal" aria-describedby="emailHelp"
-                                    value="{{ $date_start }}">
+                                <input @if(auth()->user()->hak_akses != 1) readonly @endif type="date" class="form-control" id="tanggalawal" aria-describedby="emailHelp"
+                                    value="{{ $date }}">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="exampleInputEmail1" class="form-label">Tanggal Akhir</label>
-                                <input type="date" class="form-control" id="tanggalakhir" aria-describedby="emailHelp"
-                                    value="{{ $date_end }}">
+                                <input @if(auth()->user()->hak_akses != 1) readonly @endif  type="date" class="form-control" id="tanggalakhir" aria-describedby="emailHelp"
+                                    value="{{ $date }}">
                             </div>
                         </div>
                         <div class="col-md-3">

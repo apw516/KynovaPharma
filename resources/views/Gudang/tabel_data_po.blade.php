@@ -134,7 +134,7 @@
                 <td class="text-center">
                     @if ($po->jenis_pembayaran == 'Kredit')
                         <span
-                            class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2">Hutang</span>
+                            class="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-2">Kredit</span>
                     @else
                         <span
                             class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-2">Lunas</span>
@@ -145,7 +145,14 @@
                             class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-2">OK</span>
                     @else
                         <span
-                            class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-2">RETUR</span>
+                            class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-2">Retur</span>
+                    @endif
+                    @if ($po->status_bayar == '1')
+                        <span
+                            class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-2">Sudah dibayar</span>
+                    @else
+                        <span
+                            class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-2">Belum dibayar</span>
                     @endif
                 </td>
                 <td class="text-center">
@@ -154,8 +161,14 @@
                             data-bs-toggle="modal" data-bs-target="#modaldetail" title="Detail Faktur">
                             <i class="bi bi-eye text-info"></i>
                         </button>
+                        @if ($po->status_bayar == '0')
+                            <button @if(auth()->user()->hak_akses != 1) disabled @endif class="btn btn-white btn-sm border btn-bayar" data-id="{{ $po->id }}"
+                                title="Bayar">
+                                <i class="bi  bi-cash-coin text-success"></i>
+                            </button>
+                        @endif
                         @if ($po->status == '1')
-                            <button class="btn btn-white btn-sm border btn-batal" data-id="{{ $po->id }}"
+                            <button @if(auth()->user()->hak_akses != 1) disabled @endif class="btn btn-white btn-sm border btn-batal" data-id="{{ $po->id }}"
                                 title="Batalkan/Retur">
                                 <i class="bi bi-x-circle text-danger"></i>
                             </button>
@@ -265,6 +278,22 @@
             }
         });
     })
+    $('.btn-bayar').on('click', function() {
+        Swal.fire({
+            title: "Anda yakin ?",
+            text: "Data PO sudah dibayar !",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, Po sudah dibayar !"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                id = $(this).attr('data-id')
+                bayarpo(id)
+            }
+        });
+    })
 
     function returpo(id) {
         $.ajax({
@@ -276,6 +305,46 @@
                 id
             },
             url: '<?= route('returpo') ?>',
+            error: function(data) {
+                spinner_off()
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ooops....',
+                    text: 'Sepertinya ada masalah......',
+                    footer: ''
+                })
+            },
+            success: function(data) {
+                spinner_off()
+                if (data.code == 500) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oopss...',
+                        text: data.message,
+                        footer: ''
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OK',
+                        text: data.message,
+                        footer: ''
+                    })
+                    location.reload()
+                }
+            }
+        });
+    }
+    function bayarpo(id) {
+        $.ajax({
+            async: true,
+            type: 'post',
+            dataType: 'json',
+            data: {
+                _token: "{{ csrf_token() }}",
+                id
+            },
+            url: '<?= route('bayarpo') ?>',
             error: function(data) {
                 spinner_off()
                 Swal.fire({

@@ -10,7 +10,7 @@
             <!--begin::Sidebar Menu-->
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
                 aria-label="Main navigation" data-accordion="false" id="navigation">
-                <li class="nav-item @if($menu == 'Dashboard') menu-open @endif">
+                <li class="nav-item  menu-open ">
                     <a href="#" class="nav-link ">
                         <i class="nav-icon bi bi-speedometer"></i>
                         <p>
@@ -22,10 +22,28 @@
                         <li class="nav-item">
                             <a href="{{ route('indexdashboard')}}" class="nav-link @if($menu == 'Dashboard') active @endif">
                                 <i class="nav-icon bi bi-circle"></i>
-                                <p>Dashboard Apotek </p>
+                                <p>Dashboard Analitik </p>
                             </a>
                         </li>
                     </ul>
+                    @if(auth()->user()->hak_akses == 1)
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('indexdashboardkeuangan')}}" class="nav-link @if($menu == 'Dashboardkeuangan') active @endif">
+                                <i class="nav-icon bi bi-circle"></i>
+                                <p>Dashboard Keuangan  </p>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('indexringkasankeuangan')}}" class="nav-link @if($menu == 'ringkasankeuangan') active @endif">
+                                <i class="nav-icon bi bi-circle"></i>
+                                <p>Ringkasan Keuangan  </p>
+                            </a>
+                        </li>
+                    </ul>
+                    @endif
                 </li>
                 <li class="nav-header">KASIR</li>
                 <li class="nav-item">
@@ -71,11 +89,18 @@
                         <p>Data Purchase Order</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif class="nav-item">
                     <a href="{{ route('indexstoksediaan')}}"
                         class="nav-link @if ($menu == 'stokpersediaan') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
-                        <p>Stok Persediaan</p> </h3>
+                        <p>Data Barang</p> </h3>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('indexdatastokpersediaan')}}"
+                        class="nav-link @if ($menu == 'indexstokpersediaan') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Stok Persediaan </p> </h3>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -92,56 +117,58 @@
                         <p>Log Kartu Stok</p></h3>
                     </a>
                 </li>
-                <li class="nav-header">LAPORAN</li>
-                <li class="nav-item">
+
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif  class="nav-header">LAPORAN</li>
+                <li  @if(auth()->user()->hak_akses != 1) hidden @endif class="nav-item">
                     <a href="{{ route('indexlaporansesikasir')}}"
                         class="nav-link @if ($menu == 'laporansesikasir') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
                         <p>Laporan Sesi Kasir</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif  class="nav-item">
                     <a href="{{ route('indexlaporantransaksipenjualan')}}"
                         class="nav-link @if ($menu == 'transaksipenjualan') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
                         <p>Transaki Penjualan</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif  class="nav-item">
                     <a href="{{ route('indexlaporandatapenjualan')}}"
                         class="nav-link @if ($menu == 'datapenjualan') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
                         <p>Laporan Data Penjualan</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif  class="nav-item">
                     <a href="{{ route('indexlaporanpo')}}"
                         class="nav-link @if ($menu == 'laporanpurchaseorder') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
                         <p>Laporan Purhcase Order</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif  class="nav-item">
                     <a href="{{ route('indexlaporanlogkartustok')}}"
                         class="nav-link @if ($menu == 'laporanlogkartustok') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
                         <p>Laporan Log Kartu Stok</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif  class="nav-item">
                     <a href="{{ route('indexlaporanstokretur')}}"
                         class="nav-link @if ($menu == 'laporanstokretur') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
                         <p>Laporan Stok Retur</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li @if(auth()->user()->hak_akses != 1) hidden @endif  class="nav-item">
                     <a href="{{ route('indexlaporanstokpersediaan')}}"
                         class="nav-link @if ($menu == 'laporanstokpersediaan') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>
                         <p>Laporan Stok Tersedia</p></h3>
                     </a>
                 </li>
+
                 <li class="nav-header">DATA MASTER</li>
                 <li class="nav-item">
                     <a href="{{ route('indexmasterbarang')}}"
@@ -157,7 +184,7 @@
                         <p>Master Supplier</p></h3>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li hidden class="nav-item">
                     <a href="{{ route('Indexmasteruser')}}"
                         class="nav-link @if ($menu == 'masteruser') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>

@@ -27,11 +27,36 @@ class KasirController extends Controller
         $menu = 'kasir';
         $date = $this->get_date2();
         $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+
+        $notif_ed = DB::table('mt_sediaan_obat')
+            ->whereBetween(DB::raw('DATE(tgl_expired)'), [now(), now()->addDays(90)])
+            ->count();
+
+        // Ambil semua PO yang belum Lunas (Tanpa batas tanggal awal)
+        $hutang_data = DB::table('ts_po_header')
+            ->where('status_bayar', '!=', '1')
+            ->where('status', 1) // 1 = PO Aktif/Disetujui
+            ->get();
+
+        // Hitung total notif untuk Alert
+        $notif_hutang = $hutang_data->count();
+
+        // Pisahkan mana yang sudah lewat (Overdue) dan mana yang mendekati (Jatuh Tempo)
+        $overdue_count = $hutang_data->where('tanggal_pembayaran', '<', now()->format('Y-m-d'))->count();
+        $upcoming_count = $hutang_data->where('tanggal_pembayaran', '>=', now()->format('Y-m-d'))->count();
+
+        $total_notif = $notif_ed + $notif_hutang;
+
         return view('Kasir.index', compact([
             'menu',
             'date_start',
             'date_end',
-            'get_sesi'
+            'get_sesi',
+            'notif_ed',
+            'notif_hutang',
+            'total_notif',
+            'overdue_count',
+            'upcoming_count'
         ]));
     }
     public function indexlogsesikasir()
@@ -43,11 +68,13 @@ class KasirController extends Controller
         $menu = 'logsesikasir';
         $date = $this->get_date2();
         $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+        $skrg = $this->get_date2();
         return view('Kasir.indexlogsesikasir', compact([
             'menu',
             'date_start',
             'date_end',
-            'get_sesi'
+            'get_sesi',
+            'skrg'
         ]));
     }
     public function logtransaksikasir()
@@ -63,7 +90,8 @@ class KasirController extends Controller
             'menu',
             'date_start',
             'date_end',
-            'get_sesi'
+            'get_sesi',
+            'date'
         ]));
     }
     public function indexriwayatpenjualan()
@@ -79,7 +107,8 @@ class KasirController extends Controller
             'menu',
             'date_start',
             'date_end',
-            'get_sesi'
+            'get_sesi',
+            'date'
         ]));
     }
     public function indexlogtransaksistok()
@@ -95,7 +124,8 @@ class KasirController extends Controller
             'menu',
             'date_start',
             'date_end',
-            'get_sesi'
+            'get_sesi',
+            'date'
         ]));
     }
     public function ambildatalogsesi(Request $request)

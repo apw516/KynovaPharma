@@ -15,7 +15,13 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/register', [AuthController::class, 'Store'])->middleware('guest')->name('register');
 
 Route::get('/dashboard', [DashboardController::class, 'Index'])->name('indexdashboard');
-
+Route::get('/indexdashboardkeuangan', [DashboardController::class, 'indexdashboardkeuangan'])->name('indexdashboardkeuangan');
+Route::get('/indexringkasankeuangan', [DashboardController::class, 'indexringkasankeuangan'])->name('indexringkasankeuangan');
+Route::post('ambildatatabelanalisisprodukfastmoving', [DashboardController::class, 'ambildatatabelanalisisprodukfastmoving'])->name('ambildatatabelanalisisprodukfastmoving');
+Route::post('ambildatabaranghampirhabis', [DashboardController::class, 'ambildatabaranghampirhabis'])->name('ambildatabaranghampirhabis');
+Route::post('ambildatabaranghampired', [DashboardController::class, 'ambildatabaranghampired'])->name('ambildatabaranghampired');
+Route::post('ambilringkasankeuangan', [DashboardController::class, 'ambilringkasankeuangan'])->name('ambilringkasankeuangan');
+Route::get('/dashboard/cetak-laporan', [DashboardController::class, 'cetakLaporan'])->name('dashboard.cetak');
 
 
 //CONTROLLER DATA MASTER
@@ -42,6 +48,7 @@ Route::post('/simpanhargajual', [DataMasterController::class, 'simpanhargajual']
 
 //Gudang
 Route::get('/indexpurchaseorder', [GudangController::class, 'Index'])->name('indexpurchaseorder');
+Route::get('/indexdatastokpersediaan', [GudangController::class, 'indexdatastokpersediaan'])->name('indexdatastokpersediaan');
 Route::get('/indexstoksediaan', [GudangController::class, 'indexstoksediaan'])->name('indexstoksediaan');
 Route::get('/indexlogkartustok', [GudangController::class, 'indexlogkartustok'])->name('indexlogkartustok');
 Route::get('/indexstokretur', [GudangController::class, 'indexstokretur'])->name('indexstokretur');
@@ -50,11 +57,13 @@ Route::post('/prosespo', [GudangController::class, 'prosespo'])->name('prosespo'
 Route::get('/cari-supplier', [GudangController::class, 'cariSupplier'])->name('cari-supplier');
 Route::post('/savepo', [GudangController::class, 'savepo'])->name('savepo');
 Route::post('/returpo', [GudangController::class, 'returpo'])->name('returpo');
+Route::post('/bayarpo', [GudangController::class, 'bayarpo'])->name('bayarpo');
 Route::post('/ambildatapo', [GudangController::class, 'ambildatapo'])->name('ambildatapo');
 Route::post('/ambildetailpo', [GudangController::class, 'ambildetailpo'])->name('ambildetailpo');
 Route::post('/ambildatalog', [GudangController::class, 'ambildatalog'])->name('ambildatalog');
 Route::post('/simpanretursediaan', [GudangController::class, 'simpanretursediaan'])->name('simpanretursediaan');
 Route::post('/ambildatastokretur', [GudangController::class, 'ambildatastokretur'])->name('ambildatastokretur');
+Route::post('/ambilstokpersediaanbarang', [GudangController::class, 'ambilstokpersediaanbarang'])->name('ambilstokpersediaanbarang');
 
 
 
