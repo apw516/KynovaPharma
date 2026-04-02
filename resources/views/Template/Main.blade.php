@@ -20,36 +20,58 @@
     <link rel="preload" href="./public/admin/dist/css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
     <!--begin::Fonts-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
         integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous" media="print"
-        onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-        crossorigin="anonymous" />
+        onload="this.media='all'" /> --}}
+    <link rel="stylesheet" href="{{ asset('public/css/index.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/overlayscrollbars.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/bootstrap-icons.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/apexcharts.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/jsvectormap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/jsvectormap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/bootstrap-icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/dataTables.dataTables.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/css/select2.min.css') }}">
+
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+        crossorigin="anonymous" /> --}}
     <!--end::Third Party Plugin(OverlayScrollbars)-->
     <!--begin::Third Party Plugin(Bootstrap Icons)-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-        crossorigin="anonymous" />
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        crossorigin="anonymous" /> --}}
     <link rel="stylesheet" href="./public/admin/dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
     <!-- apexcharts -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
-        integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous" />
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+        integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous" /> --}}
     <!-- jsvectormap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
-        integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
+        integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" /> --}}
+    {{-- <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css"> --}}
+    {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"> --}}
+    <script href="{{ asset('public/js/jquery-3.6.0.js') }}" crossorigin="anonymous"></script>
+    <script href="{{ asset('public/js/jquery-ui.js') }}"></script>
+    <script href="{{ asset('public/js/chart.js') }}"></script>
+    <script href="{{ asset('public/js/dataTables.js') }}"></script>
+    <script href="{{ asset('public/js/select2.min.js') }}"></script>
+    <script src="{{ asset('public/plugins/js_ex/jquery-3.6.0.js') }}"></script>
+    <script src="{{ asset('public/plugins/js_ex/jquery-ui.js') }}"></script>
+    <script src="{{ asset('public/plugins/js_ex/chart.js') }}"></script>
+    <script src="{{ asset('public/plugins/js_ex/dataTables.js') }}"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.js"></script> --}}
+    {{-- <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" /> --}}
+    {{-- <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script> --}}
     //sampe sini
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
+    {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
     <link rel="stylesheet"
         href="{{ asset('public/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }} ">
-    <link rel="stylesheet" href="{{ asset('public/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+    <link rel="stylesheet"
+        href="{{ asset('public/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('public/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
     <style>
         #my {
@@ -105,6 +127,7 @@
         }
     </style>
 </head>
+
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="preloader2" id="loader2">

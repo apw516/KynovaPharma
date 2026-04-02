@@ -28,12 +28,12 @@
                 </div>
             </div>
         </div>
-
+        <input hidden type="text" value="{{ $headerid }}" id="idheader">
         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
             <button type="button" class="btn btn-outline-primary px-4" onclick="location.reload();">
                 <i class="bi bi-plus-lg me-2"></i>Transaksi Baru
             </button>
-            <button type="button" class="btn btn-success px-4" onclick="window.print();">
+            <button type="button" class="btn btn-success px-4" onclick="cetakstruk()">
                 <i class="bi bi-printer me-2"></i>Cetak Struk
             </button>
         </div>
@@ -55,3 +55,12 @@
         }
     }
 </style>
+<script>
+    function cetakstruk() {
+        idheader = $('#idheader').val()
+        // Cara 1: Buka di Tab Baru (Disarankan agar halaman kasir tidak tertutup)
+        let url = "{{ route('transaksi.cetak', ':id') }}";
+        url = url.replace(':id', idheader);
+        window.open(url, '_blank');
+    }
+</script>

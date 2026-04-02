@@ -12,6 +12,7 @@ Route::get('/', [AuthController::class, 'Index'])->middleware('guest');
 Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->name('login');
 Route::post('/login', [AuthController::class, 'authenticate']);
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/home', [AuthController::class, 'logout'])->name('logout')->name('home');
 Route::post('/register', [AuthController::class, 'Store'])->middleware('guest')->name('register');
 
 Route::get('/dashboard', [DashboardController::class, 'Index'])->name('indexdashboard');
@@ -83,7 +84,7 @@ Route::post('/ambildetailtransaksi', [KasirController::class, 'ambildetailtransa
 Route::post('/returheader', [KasirController::class, 'returheader'])->name('returheader');
 Route::post('/returdetail', [KasirController::class, 'returdetail'])->name('returdetail');
 Route::post('/ambilriwayatkartustok', [KasirController::class, 'ambilriwayatkartustok'])->name('ambilriwayatkartustok');
-
+Route::get('/transaksi/cetak/{id}', [KasirController::class, 'cetakStruk'])->name('transaksi.cetak');
 
 Route::get('/indexlaporansesikasir', [LaporanController::class, 'indexlaporansesikasir'])->name('indexlaporansesikasir');
 Route::get('/indexlaporantransaksipenjualan', [LaporanController::class, 'Index'])->name('indexlaporantransaksipenjualan');

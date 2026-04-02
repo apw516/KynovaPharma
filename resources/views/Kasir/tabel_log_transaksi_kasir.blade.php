@@ -141,6 +141,11 @@
                                     inv="{{ $item->no_invoice }}">
                                     <i class="bi bi-arrow-counterclockwise text-danger"></i>
                                 </button>
+                                <button title="Retur" @if ($item->status == 2) disabled @endif
+                                    class="btn btn-white border cetakstruk" idheader="{{ $item->id }}"
+                                    inv="{{ $item->no_invoice }}">
+                                    <i class="bi bi-printer text-primary"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -305,6 +310,12 @@
                 });
             };
         });
+    })
+    $('.cetakstruk').on('click', function() {
+        id = $(this).attr('idheader')
+        let url = "{{ route('transaksi.cetak', ':id') }}";
+        url = url.replace(':id', id);
+        window.open(url, '_blank');
     })
 
     function returheader(id) {

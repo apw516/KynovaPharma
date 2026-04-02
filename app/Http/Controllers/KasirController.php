@@ -523,7 +523,8 @@ class KasirController extends Controller
                 }
             }
             model_ts_header::where('id', $header->id)->update(['status' => 1]);
-            $html = view('Kasir.view_kembalian', compact(['gt', 'uang']))->render();
+            $headerid = $header->id;
+            $html = view('Kasir.view_kembalian', compact(['gt', 'uang','headerid']))->render();
             DB::commit();
             $response = [
                 'code' => 200,
@@ -627,5 +628,26 @@ class KasirController extends Controller
         ];
         echo json_encode($response);
         die;
+    }
+    public function cetakStruk($id)
+    {
+        $header = model_ts_header::where('id',$id)->first();
+        // $detail = model_ts_detail::where('id_header',$id)->get();
+        $detail = model_ts_detail::where('ts_penjualan_detail.id_header', $id)
+            ->join('mt_barang', 'ts_penjualan_detail.kode_barang', '=', 'mt_barang.kode_barang')
+            ->select(
+                'ts_penjualan_detail.*', 
+                'mt_barang.nama_dagang', 
+                'mt_barang.satuan_besar', 
+                'mt_barang.satuan_sedang', 
+                'mt_barang.satuan_kecil', 
+                'mt_barang.rasio_sedang', 
+                'mt_barang.rasio_kecil', 
+                'ts_penjualan_detail.harga_jual'
+            )
+            ->get();
+        return view('Laporan.nota_kynova',compact([
+            'header','detail'
+        ]));
     }
 }

@@ -7,16 +7,27 @@
     All rights reserved.
 </footer>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous">
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous">
-</script>
+{{-- <script  href="{{ asset('public/js/overlayscrollbars.browser.es6.min.js') }}"></script>
+<script  href="{{ asset('public/js/popper.min.js') }}"></script>
+<script  href="{{ asset('public/js/bootstrap.min.js') }}"></script>
+<script  href="{{ asset('public/js/swal.js') }}"></script> --}}
+
+<script src="{{ asset('public/plugins/js_ex/overlay.js') }}"></script>
+<script src="{{ asset('public/plugins/js_ex/popper.js') }}"></script>
+<script src="{{ asset('public/plugins/js_ex/bootstrap.js') }}"></script>
+<script src="{{ asset('public/plugins/js_ex/vectormap.js') }}"></script>
+<script src="{{ asset('public/plugins/js_ex/swal.js') }}"></script>
+
+{{-- <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script> --}}
+{{-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous">
+</script> --}}
+{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous">
+</script> --}}
 <script src="./public/admin/dist/js/adminlte.js"></script>
 <!-- jsvectormap -->
-<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js" integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js" integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js" integrity="sha256-/t1nN2956BT869E6H4V1dnt0X5pAQHPytli+1nTZm2Y=" crossorigin="anonymous"></script> --}}
+{{-- <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js" integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY=" crossorigin="anonymous"></script> --}}
+{{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 
  <script src="{{ asset('public/plugins/datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ asset('public/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
