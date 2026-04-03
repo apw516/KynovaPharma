@@ -115,7 +115,7 @@ class DataMasterController extends Controller
             DB::raw('(SELECT stok_now FROM log_transaksi_stok 
                   WHERE log_transaksi_stok.kode_barang = mt_barang.kode_barang 
                   ORDER BY id DESC LIMIT 1) as stok_terakhir')
-        ]);
+        ])->havingRaw('stok_terakhir > 0');;
 
         return DataTables::of($data)
             ->addIndexColumn()
@@ -351,7 +351,11 @@ class DataMasterController extends Controller
         try {
             $id = $request->idbarang;
             $harga = $request->harga;
-            Medicine::where('id', $id)->update(['harga_jual' => $harga]);
+            $mt_barang = db::select('select * from mt_barang where id = ?',[$id]);
+            $rasio_sedang = $mt_barang[0]->rasio_sedang;
+            $rasio_kecil = $mt_barang[0]->rasio_kecil;
+            $harga_jual = $harga / $rasio_kecil;
+            Medicine::where('id', $id)->update(['harga_jual' => $harga_jual]);
             $response = [
                 'code' => 200,
                 'message' => 'sukses'

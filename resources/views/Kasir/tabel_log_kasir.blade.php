@@ -168,8 +168,8 @@
                         </td>
                         <td class="text-center">
                             @if ($item->status == 1)
-                                <span
-                                    class="badge rounded-pill bg-warning-subtle text-warning px-3 border border-warning-subtle">
+                                <span idsesi="{{ $item->id }}"
+                                    class="badge rounded-pill bg-warning-subtle text-warning px-3 border border-warning-subtle tutupsesi">
                                     <i class="bi bi-door-open-fill me-1"></i> TERBUKA
                                 </span>
                             @else
@@ -227,4 +227,57 @@
         // Rapikan search bar
         $('.dataTables_filter input').addClass('form-control border-0 bg-light px-3 shadow-none');
     })
+
+    $('.tutupsesi').on('click', function() {
+        id = $(this).attr('idsesi')
+        Swal.fire({
+            title: "Anda yakin ?",
+            text: "Sesi Kasir akan ditutup...",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, tutup ..!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                tutup(id)
+            }
+        });
+    })
+
+    function tutup(id) {
+        $.ajax({
+            async: true,
+            type: 'post',
+            dataType: 'json',
+            data: {
+                _token: "{{ csrf_token() }}",
+                id
+            },
+            url: '<?= route('tutupsesikasir') ?>',
+            error: function(data) {
+                spinner_off()
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ooops....',
+                    text: 'Sepertinya ada masalah......',
+                    footer: ''
+                })
+            },
+            success: function(data) {
+                spinner_off()
+                if (data.code == 500) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oopss...',
+                        text: data.message,
+                        footer: ''
+                    })
+                } else {
+                    spinner_off()
+                    location.reload()
+                }
+            }
+        });
+    }
 </script>
