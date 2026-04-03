@@ -333,7 +333,6 @@
                         })
                         $('#modaleditbarang').modal('toggle');
                         document.getElementById("formeditmasterbarang").reset();
-                        location.reload()
                     }
                 }
             });
