@@ -75,12 +75,12 @@
                         class="bi bi-node-plus" style="margin-right:4px"></i> Mulai Sesi Kasir</button>
             </div>
         @else
-        <div class="container-fluid">
-            <input hidden type="text" class="form-control" value="{{ $get_sesi[0]->id }}" id="id_sesi_kasir">
-            ID Sesi Kasir : {{ $get_sesi[0]->id }} <br>
-            Tanggal Sesi Kasi : {{ $get_sesi[0]->tgl_sesi_kasir }} <button style="margin-left:10px"
-                class="btn btn-sm btn-secondary" onclick="tutupsesikasir()">Tutup</button>
-        </div>
+            <div class="container-fluid">
+                <input hidden type="text" class="form-control" value="{{ $get_sesi[0]->id }}" id="id_sesi_kasir">
+                ID Sesi Kasir : {{ $get_sesi[0]->id }} <br>
+                Tanggal Sesi Kasi : {{ $get_sesi[0]->tgl_sesi_kasir }} <button style="margin-left:10px"
+                    class="btn btn-sm btn-secondary" onclick="tutupsesikasir()">Tutup</button>
+            </div>
         @endif
         <div @if (count($get_sesi) == 0) hidden @endif class="container-fluid">
             <div class="card mt-3">
@@ -282,11 +282,43 @@
                         data: 'harga_jual',
                         name: 'harga_jual',
                         render: function(data, type, row) {
-                            if (data == null) return '0';
+                            if (data == null) return 'Rp 0';
 
-                            // Menambahkan Rp dan mengubah angka ke format titik (1.000.000)
-                            return 'Rp ' + parseFloat(data).toFixed(0).replace(
-                                /(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                            // Ambil data harga satuan terkecil dan rasio
+                            let hargaKecil = parseFloat(data);
+                            let rSedang = parseInt(row.rasio_sedang) || 1;
+                            let rKecil = parseInt(row.rasio_kecil) || 1;
+
+                            // 1. Hitung Harga per Satuan Sedang (misal: Harga per Strip)
+                            let hargaSedang = hargaKecil * rKecil;
+
+                            // 2. Hitung Harga per Satuan Besar (misal: Harga per Box)
+                            let hargaBesar = hargaSedang * rSedang;
+
+                            // Fungsi helper untuk format Rupiah
+                            const formatIDR = (val) => {
+                                return 'Rp ' + val.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g,
+                                    '$1.');
+                            };
+
+                            return `
+            <div style="line-height: 1.5;">
+                <div class="mb-1">
+                    <small class="text-muted d-block" style="font-size: 10px;">Harga / ${row.satuan_kecil}:</small>
+                    <span class="fw-bold text-dark">${formatIDR(hargaKecil)}</span>
+                </div>
+                
+                <div class="mb-1">
+                    <small class="text-muted d-block" style="font-size: 10px;">Harga / ${row.satuan_sedang}:</small>
+                    <span class="text-info" style="font-weight: 500;">${formatIDR(hargaSedang)}</span>
+                </div>
+
+                <div>
+                    <small class="text-muted d-block" style="font-size: 10px;">Harga / ${row.satuan_besar}:</small>
+                    <span class="text-primary" style="font-weight: 500;">${formatIDR(hargaBesar)}</span>
+                </div>
+            </div>
+        `;
                         }
                     },
                     // {

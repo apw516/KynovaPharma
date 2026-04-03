@@ -192,7 +192,7 @@
                     </a>
                 </li>
                 <li class="nav-header">INFO AKUN</li>
-                <li class="nav-item">
+                <li hidden class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-person-vcard"></i>
                         <p class="text">Detail Akun</p>

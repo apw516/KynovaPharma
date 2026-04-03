@@ -1,3 +1,49 @@
+ <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>No</th>
+                <th>Nama Obat</th>
+                <th>Satuan</th>
+                <th class="text-center">Qty</th>
+                <th class="text-right">Harga Satuan</th>
+                <th class="text-right">Potongan</th>
+                <th class="text-right">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @php $grandTotal = 0; @endphp
+            @foreach($hasil_transaksi as $index => $item)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>
+                        <strong>{{ $item['nama_obat'] }}</strong>
+                    </td>
+                    <td>
+                        <span class="badge bg-info text-dark">{{ $item['satuan_pilih'] }}</span>
+                    </td>
+                    <td class="text-center">{{ $item['qty'] }}</td>
+                    <td class="text-right">Rp {{ number_format($item['harga_satuan'], 0, ',', '.') }}</td>
+                    <td class="text-right text-danger">
+                        {{ $item['diskon'] > 0 ? '- Rp ' . number_format($item['diskon'], 0, ',', '.') : '-' }}
+                    </td>
+                    <td class="text-right fw-bold">
+                        Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
+                    </td>
+                </tr>
+                @php $grandTotal += $item['subtotal']; @endphp
+            @endforeach
+        </tbody>
+        <tfoot class="table-light">
+            <tr>
+                <th colspan="6" class="text-right">Total Pembayaran :</th>
+                <th class="text-right text-primary" style="font-size: 1.1rem;">
+                    Rp {{ number_format($grandTotal, 0, ',', '.') }}
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
  <form class="formhasil" id="formhasil">
      <table class="table table-bordered">
          <thead>
