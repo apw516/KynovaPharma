@@ -13,7 +13,9 @@
     <tbody>
         @foreach ($data as $d)
             <tr class="pilih-obat" style="cursor:pointer" data-kode="{{ $d->kode_barang }}" data-nama="{{ $d->nama_obat }}"
-                data-dagang="{{ $d->nama_dagang }}" data-satuan="{{ $d->satuan_besar }}">
+                data-dagang="{{ $d->nama_dagang }}" data-satuan="{{ $d->satuan_besar }}"
+                data-satuan_sedang="{{ $d->satuan_sedang }}" data-satuan_kecil="{{ $d->satuan_kecil }}"
+                data-rasio_sedang = "{{ $d->rasio_sedang }}" data-rasio_kecil="{{ $d->rasio_kecil }}">
                 <td>{{ $d->kode_barang }}</td>
                 <td>{{ $d->nama_obat }}</td>
                 <td>{{ $d->nama_dagang }}</td>
@@ -27,63 +29,20 @@
         @endforeach
     </tbody>
 </table>
-
+<div style="display: none;">
+    <select id="master-sediaan-list">
+        <option value="">-- Pilih Sediaan --</option>
+        @foreach ($mt_sediaan as $sediaan)
+            <option value="{{ $sediaan->kode_satuan }}">{{ $sediaan->nama_satuan }}</option>
+        @endforeach
+    </select>
+</div>
 {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 
 <script>
     $(document).ready(function() {
         // 1. Ketika baris tabel diklik
-        $('.pilih-obat').on('click', function() {
-            let kode = $(this).data('kode');
-            let nama = $(this).data('nama');
-            let dagang = $(this).data('dagang');
-            let satuan = $(this).data('satuan');
-            // Cek apakah obat sudah ada di list (agar tidak double)
-            if ($(`#row-${kode}`).length > 0) {
-                alert('Obat ini sudah terpilih!');
-                return;
-            }
-            // 2. Susun template HTML untuk inputan form
-            let html = `
-            <tr id="row-${kode}">
-                <td>
-                    <strong>${dagang}</strong><br>
-                    <small class="text-muted">${nama}</small>
-                    <input type="hidden" name="kode_barang" value="${kode}">
-                    <input type="hidden" name="nama_barang" value="${dagang}">
-                </td>
-                <td>
-                    <input type="text" name="qty" class="form-control form-control-sm" placeholder="jumlah ..." value="0" required>
-                </td>
-                <td>
-                    <input type="text" name="satuan" class="form-control form-control-sm" placeholder="satuan barang ..." value="${satuan}">
-                </td>
-                <td>
-                    <input type="text" name="hargabeli" class="form-control form-control-sm input-mask-uang" placeholder="Masukan hrga beli ..." value="0">
-                    <input hidden type="text" name="hargabeliasli" class="form-control form-control-sm nilai-asli" placeholder="Masukan hrga beli ..." value="0">
-                </td>
-                <td>
-                    <input type="text" name="diskonpersen" class="form-control form-control-sm" placeholder="Masukan diskon dalam persen ..." value="0">
-                </td>
-                <td>
-                    <input type="text" name="diskonrupiah" class="form-control form-control-sm input-mask-uang" placeholder="Masukan diskon dalam rupiah ..." value="0">
-                    <input hidden type="text" name="diskonrupiahasli" class="form-control form-control-sm nilai-asli" placeholder="Masukan diskon dalam rupiah ..." value="0">
-                </td>
-                <td>
-                    <input type="text" name="kodebatch" class="form-control form-control-sm" placeholder="Masukan kode batch ..." value="">
-                </td>
-                <td>
-                    <input type="date" name="expireddate" class="form-control form-control-sm" placeholder="Masukan tanggal expired" value="">
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm btn-hapus"><i class="bi bi-x-circle"></i></button>
-                </td>
-            </tr>
-        `;
 
-            // 3. Masukkan ke dalam wrapper
-            $('#wrapper-form-obat').append(html);
-        });
         // 4. Fungsi Hapus Baris
         $(document).on('click', '.btn-hapus', function() {
             $(this).closest('tr').remove();
@@ -128,4 +87,99 @@
             "ordering": false,
         })
     });
+    $(document).on('click', '.pilih-obat', function() {
+        $(document).on('click', '.pilih-obat', function() {
+            let kode = $(this).data('kode');
+            let nama = $(this).data('nama');
+            let dagang = $(this).data('dagang');
+
+            // Ambil Data Satuan & Rasio dari tombol
+            let sbesar = $(this).data('satuan');
+            let ssedang = $(this).data('satuan_sedang');
+            let skecil = $(this).data('satuan_kecil');
+            let rsedang = $(this).data('rasio_sedang') || 1;
+            let rkecil = $(this).data('rasio_kecil') || 1;
+
+            // Cek apakah obat sudah ada di list
+            if ($(`#row-${kode}`).length > 0) {
+                return;
+            }
+            // Pindahkan master HTML ke variabel agar tidak dipanggil berulang
+            let masterSediaanHTML = $('#master-sediaan-list').html();
+
+            // Fungsi pembantu (Didefinisikan sekali saja)
+            const renderSelect = (name, currentValue) => {
+                return `
+        <select name="${name}" class="form-select form-select-sm select-sediaan" data-selected="${currentValue || ''}">
+            ${masterSediaanHTML}
+        </select>`;
+            };
+
+            // Susun template HTML
+            let html = `
+    <tr id="row-${kode}">
+        <td>
+            <strong>${dagang}</strong><br>
+            <small class="text-muted">${nama}</small>
+            <input type="hidden" name="kode_barang" value="${kode}">
+            <input type="hidden" name="nama_barang" value="${dagang}">
+        </td>
+        <td>
+            <input type="number" name="qty" class="form-control form-control-sm" value="0" required>
+        </td>
+        <td>
+            <label class="small text-primary">Satuan Besar</label>
+            ${renderSelect('satuan_besar', sbesar)}
+            <label class="small text-success">Satuan Sedang</label>
+            ${renderSelect('satuan_sedang', ssedang)}
+            <label class="small text-success">Rasio Sedang</label>
+            <input type="number" name="rasio_sedang" class="form-control form-control-sm mt-1" value="${rsedang}" placeholder="Rasio...">
+            <label class="small text-info">Satuan Kecil</label>
+            ${renderSelect('satuan_kecil', skecil)}
+            <label class="small text-success">Rasio Kecil</label>
+            <input type="number" name="rasio_kecil" class="form-control form-control-sm mt-1" value="${rkecil}" placeholder="Rasio...">
+        </td>
+        <td>
+            <input type="text" name="hargabeli" class="form-control form-control-sm input-mask-uang" value="0">
+            <input type="hidden" name="hargabeliasli" class="nilai-asli" value="0">
+        </td>
+        <td>
+            <input type="text" name="diskonpersen" class="form-control form-control-sm" value="0">
+            </td>
+            <td>
+                <input type="text" name="diskonrupiah" class="form-control form-control-sm input-mask-uang" value="0">
+                <input type="text" name="diskonrupiahasli" class="form-control form-control-sm nilai-asli" value="0">
+        </td>
+        <td>
+            <input type="text" name="kodebatch" class="form-control form-control-sm" placeholder="Batch...">
+        </td>
+        <td>
+            <input type="date" name="expireddate" class="form-control form-control-sm">
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm btn-hapus"><i class="bi bi-x-circle"></i></button>
+        </td>
+    </tr>`;
+
+            // Tambahkan ke DOM
+            let $newRow = $(html);
+            $('#wrapper-form-obat').append($newRow);
+
+            // Logic Auto-Select Sediaan
+            $newRow.find('.select-sediaan').each(function() {
+                let valToSelect = $(this).data('selected');
+                if (valToSelect) {
+                    $(this).val(valToSelect);
+
+                    // Fallback: Jika value tidak ketemu, cari berdasarkan teks
+                    if ($(this).val() === null || $(this).val() === "") {
+                        $(this).find('option').filter(function() {
+                            return $(this).text().trim() === valToSelect.toString()
+                                .trim();
+                        }).prop('selected', true);
+                    }
+                }
+            });
+        });
+    })
 </script>

@@ -49,6 +49,7 @@ Route::post('/simpanhargajual', [DataMasterController::class, 'simpanhargajual']
 
 //Gudang
 Route::get('/indexpurchaseorder', [GudangController::class, 'Index'])->name('indexpurchaseorder');
+Route::get('/indexstokinject', [GudangController::class, 'indexstokinject'])->name('indexstokinject');
 Route::get('/indexdatastokpersediaan', [GudangController::class, 'indexdatastokpersediaan'])->name('indexdatastokpersediaan');
 Route::get('/indexstoksediaan', [GudangController::class, 'indexstoksediaan'])->name('indexstoksediaan');
 Route::get('/indexlogkartustok', [GudangController::class, 'indexlogkartustok'])->name('indexlogkartustok');
@@ -65,6 +66,8 @@ Route::post('/ambildatalog', [GudangController::class, 'ambildatalog'])->name('a
 Route::post('/simpanretursediaan', [GudangController::class, 'simpanretursediaan'])->name('simpanretursediaan');
 Route::post('/ambildatastokretur', [GudangController::class, 'ambildatastokretur'])->name('ambildatastokretur');
 Route::post('/ambilstokpersediaanbarang', [GudangController::class, 'ambilstokpersediaanbarang'])->name('ambilstokpersediaanbarang');
+Route::get('/getdatabarang_opname', [GudangController::class, 'getdatabarang_opname'])->name('getdatabarang_opname');
+Route::post('/simpandatainject', [GudangController::class, 'simpandatainject'])->name('simpandatainject');
 
 
 

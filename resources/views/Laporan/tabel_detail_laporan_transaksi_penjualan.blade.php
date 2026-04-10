@@ -35,7 +35,7 @@
             <tr>
                 <th style="width: 35%">Nama Barang</th>
                 <th class="text-center">Qty</th>
-                <th class="text-end">Harga Satuan</th>
+                {{-- <th class="text-end">Harga Satuan</th> --}}
                 <th class="text-end">Subtotal</th>
                 <th class="text-end">Potongan (Disc)</th>
                 <th class="text-end fw-bold">Grand Total</th>
@@ -52,12 +52,73 @@
                             </span>
                         @endif
                     </td>
-                    <td class="text-center">
+                    {{-- <td class="text-center">
                         <span class="badge bg-secondary-subtle text-secondary px-3">{{ $d->qty }}</span>
+                    </td> --}}
+                    <td>
+                        @php
+                            $sisa_qty = $d->qty;
+                            $harga_satuan_terkecil = $d->harga_jual; // Harga per 1 Tablet
+
+                            // 1. Hitung Rasio
+                            $rasio_ke_bok = $d->rasio_sedang * $d->rasio_kecil; // Misal: 10 * 10 = 100
+                            $rasio_ke_strip = $d->rasio_kecil; // Misal: 10
+
+                            // 2. Hitung Harga Satuan per Unit
+                            $harga_per_bok = $rasio_ke_bok * $harga_satuan_terkecil;
+                            $harga_per_strip = $rasio_ke_strip * $harga_satuan_terkecil;
+
+                            // 3. Logika Pecahan Qty (seperti sebelumnya)
+                            $jml_bok = floor($sisa_qty / $rasio_ke_bok);
+                            $sisa_setelah_bok = $sisa_qty % $rasio_ke_bok;
+                            $jml_strip = floor($sisa_setelah_bok / $rasio_ke_strip);
+                            $jml_tablet = $sisa_setelah_bok % $rasio_ke_strip;
+
+                            $result = [];
+
+                            // Tampilan: [Jumlah] [Satuan] (@Harga Satuan Unit)
+                            if ($jml_bok > 0) {
+                                $result[] =
+                                    $jml_bok .
+                                    ' ' .
+                                    $d->satuan_besar .
+                                    ' (@Rp ' .
+                                    number_format($harga_per_bok, 0, ',', '.') .
+                                    ')';
+                            }
+
+                            if ($jml_strip > 0) {
+                                $result[] =
+                                    $jml_strip .
+                                    ' ' .
+                                    $d->satuan_sedang .
+                                    ' (@Rp ' .
+                                    number_format($harga_per_strip, 0, ',', '.') .
+                                    ')';
+                            }
+
+                            if ($jml_tablet > 0) {
+                                $result[] =
+                                    $jml_tablet .
+                                    ' ' .
+                                    $d->satuan_kecil .
+                                    ' (@Rp ' .
+                                    number_format($harga_satuan_terkecil, 0, ',', '.') .
+                                    ')';
+                            }
+                        @endphp
+
+                        {{-- Tampilkan hasil dengan pemisah koma atau spasi --}}
+                        @if (empty($result))
+                            0 Tablet
+                        @else
+                            {{ implode(', ', $result) }}
+                        @endif
                     </td>
-                    <td class="text-end text-muted small">
+                    {{-- <td></td> --}}
+                    {{-- <td class="text-end text-muted small">
                         Rp {{ number_format($d->harga_jual, 0, ',', '.') }}
-                    </td>
+                    </td> --}}
                     <td class="text-end">
                         Rp {{ number_format($d->subtotal, 0, ',', '.') }}
                     </td>

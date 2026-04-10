@@ -89,6 +89,13 @@
                         <p>Data Purchase Order</p></h3>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('indexstokinject')}}"
+                        class="nav-link @if ($menu == 'indexstokinject') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Stok Opname</p></h3>
+                    </a>
+                </li>
                 <li @if(auth()->user()->hak_akses != 1) hidden @endif class="nav-item">
                     <a href="{{ route('indexstoksediaan')}}"
                         class="nav-link @if ($menu == 'stokpersediaan') active @endif">

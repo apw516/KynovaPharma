@@ -81,10 +81,18 @@ class LaporanController extends Controller
     {
         $id = $request->id;
         $tglakhir = $request->tglakhir;
-        $data = db::select('select b.id as iddetail ,c.`nama_dagang`,d.`nama`,b.`qty`,b.`subtotal`,b.`grandtotal`,b.`harga_jual`,b.`diskon`,b.status_retur from ts_penjualan_header a
+        $data = db::select('select b.id as iddetail ,c.`nama_dagang`,d.`nama`,b.`qty`,b.`subtotal`,b.`grandtotal`,b.`harga_jual`,b.`diskon`,b.status_retur,c.satuan_besar,c.satuan_sedang,c.satuan_kecil,c.rasio_sedang,c.rasio_kecil from ts_penjualan_header a
         inner join ts_penjualan_detail b on a.id = b.`id_header`
         inner join mt_barang c on b.`kode_barang` = c.`kode_barang`
         inner join user d on a.`id_user` = d.id where a.id = ? ORDER BY a.id DESC', [$id]);
+        //  $html = view('Kasir.tabel_detail_transaksi_kasir', compact(['data']))->render();
+        // $response = [
+        //     'code' => 200,
+        //     'view' => $html,
+        //     'message' => 'sukses'
+        // ];
+        // echo json_encode($response);
+        // die;
         $html = view('Laporan.tabel_detail_laporan_transaksi_penjualan', compact(['data']))->render();
         $response = [
             'code' => 200,

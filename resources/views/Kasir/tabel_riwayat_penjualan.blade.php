@@ -41,7 +41,7 @@
             <th>No. Invoice</th>
             <th>Detail Barang</th>
             <th class="text-center">Qty Detail</th>
-            <th class="text-end">Harga</th>
+            {{-- <th class="text-end">Harga</th> --}}
             <th class="text-end">Subtotal</th>
             <th class="text-end">Grandtotal</th>
             <th class="text-center">Status</th>
@@ -63,26 +63,60 @@
                     </small>
                 </td>
                 <td class="text-center">
-                    @php
-                        $sisa = $d->qty;
-                        $hasil_detail = [];
-                        $jml_besar = floor($sisa / ($d->rasio_sedang * $d->rasio_kecil));
-                        if ($jml_besar > 0) {
-                            $hasil_detail[] = "<span class='badge bg-light text-dark border'>$jml_besar $d->satuan_besar</span>";
-                            $sisa %= $d->rasio_sedang * $d->rasio_kecil;
+                      @php
+                        $sisa_qty = $d->qty;
+                        $harga_satuan_terkecil = $d->harga_jual; // Harga per 1 Tablet
+
+                        // 1. Hitung Rasio
+                        $rasio_ke_bok = $d->rasio_sedang * $d->rasio_kecil; // Misal: 10 * 10 = 100
+                        $rasio_ke_strip = $d->rasio_kecil; // Misal: 10
+
+                        // 2. Hitung Harga Satuan per Unit
+                        $harga_per_bok = $rasio_ke_bok * $harga_satuan_terkecil;
+                        $harga_per_strip = $rasio_ke_strip * $harga_satuan_terkecil;
+
+                        // 3. Logika Pecahan Qty (seperti sebelumnya)
+                        $jml_bok = floor($sisa_qty / $rasio_ke_bok);
+                        $sisa_setelah_bok = $sisa_qty % $rasio_ke_bok;
+                        $jml_strip = floor($sisa_setelah_bok / $rasio_ke_strip);
+                        $jml_tablet = $sisa_setelah_bok % $rasio_ke_strip;
+
+                        $result = [];
+
+                        // Tampilan: [Jumlah] [Satuan] (@Harga Satuan Unit)
+                        if ($jml_bok > 0) {
+                            $result[] =
+                                $jml_bok .
+                                ' ' .
+                                $d->satuan_besar .
+                                ' (@Rp ' .
+                                number_format($harga_per_bok, 0, ',', '.') .
+                                ')';
                         }
-                        $jml_sedang = floor($sisa / $d->rasio_kecil);
-                        if ($jml_sedang > 0) {
-                            $hasil_detail[] = "<span class='badge bg-light text-dark border'>$jml_sedang $d->satuan_sedang</span>";
-                            $sisa %= $d->rasio_kecil;
+
+                        if ($jml_strip > 0) {
+                            $result[] =
+                                $jml_strip .
+                                ' ' .
+                                $d->satuan_sedang .
+                                ' (@Rp ' .
+                                number_format($harga_per_strip, 0, ',', '.') .
+                                ')';
                         }
-                        if ($sisa > 0) {
-                            $hasil_detail[] = "<span class='badge bg-light text-dark border'>$sisa $d->satuan_kecil</span>";
+
+                        if ($jml_tablet > 0) {
+                            $result[] =
+                                $jml_tablet .
+                                ' ' .
+                                $d->satuan_kecil .
+                                ' (@Rp ' .
+                                number_format($harga_satuan_terkecil, 0, ',', '.') .
+                                ')';
                         }
                     @endphp
-                    {!! implode(' ', $hasil_detail) !!}
+                    {!! implode(' ', $result) !!}
                 </td>
-                <td class="text-end">Rp {{ number_format($d->harga_jual, 0, ',', '.') }}</td>
+                {{-- <td class="text-end">Rp {{ number_format($d->harga_jual, 0, ',', '.') }}</td> --}}
                 <td class="text-end">Rp {{ number_format($d->subtotal, 0, ',', '.') }}</td>
                 <td class="text-end fw-bold text-success">Rp {{ number_format($d->grandtotal, 0, ',', '.') }}</td>
                 <td class="text-center">
