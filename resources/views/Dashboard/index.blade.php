@@ -156,8 +156,13 @@
                         <div class="info-box-content">
                             <span class="info-box-text text-muted small">Omzet Bulan Ini</span>
                             <span class="info-box-number fw-bold fs-5">
-                               @if(count($totals) > 0 ) Rp
-                                {{ number_format((float) $totals[0], 0, ',', '.') }} @else 0 @endif</span>
+                                @if (count($totals) > 0)
+                                    Rp
+                                    {{ number_format((float) $totals[0], 0, ',', '.') }}
+                                @else
+                                    0
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -404,6 +409,49 @@
         });
     </script>
     <script>
+        $(function() {
+            $("#tableED").DataTable({
+                // "dom": "tp" -> t (table), p (pagination)
+                // Jika ingin ada info jumlah data, gunakan "tip" -> t (table), i (info), p (pagination)
+                "dom": "tp",
+                "ordering": true,
+                "paging": true, // Aktifkan pagination
+                "pageLength": 10, // Tentukan jumlah baris per halaman
+                "order": [
+                    [1, "asc"]
+                ],
+                "responsive": true,
+                "language": {
+                    "emptyTable": "Tidak ada produk yang dibawah limit stok.",
+                    "paginate": {
+                        "previous": "Sebelumnya",
+                        "next": "Berikutnya"
+                    }
+                }
+            });
+        });
+        $(function() {
+            $("#tableStok").DataTable({
+                // "dom": "tp" -> t (table), p (pagination)
+                // Jika ingin ada info jumlah data, gunakan "tip" -> t (table), i (info), p (pagination)
+                "dom": "tp",
+                "ordering": true,
+                "paging": true, // Aktifkan pagination
+                "pageLength": 10, // Tentukan jumlah baris per halaman
+                "order": [
+                    [1, "asc"]
+                ],
+                "responsive": true,
+                "language": {
+                    "emptyTable": "Tidak ada produk yang dibawah limit stok.",
+                    "paginate": {
+                        "previous": "Sebelumnya",
+                        "next": "Berikutnya"
+                    }
+                }
+            });
+        });
+     
         $(document).ready(function() {
             tampilkan_tabel_analisis()
         })

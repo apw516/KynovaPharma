@@ -65,7 +65,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" /> --}}
     {{-- <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script> --}}
-    //sampe sini
     {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
     {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
     <link rel="stylesheet"
