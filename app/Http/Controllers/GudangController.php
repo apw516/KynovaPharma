@@ -869,8 +869,10 @@ class GudangController extends Controller
                 $harganya = $harga_modal + $pajak_rupiah;
                 // $harganya = $arr['hargamodalasli'] + $pajak_rupiah;
                 $mt_barang = Medicine::where('id', $arr['idbarang'])->get()->first();
-                $rasio_sedang = $arr['rasiosedang'];
-                $rasio_kecil = $arr['rasiokecil'];
+                // $rasio_sedang = $arr['rasiosedang'];
+                // $rasio_kecil = $arr['rasiokecil'];
+                $rasio_sedang = 1;
+                $rasio_kecil = 1;
                 // $satuan_besar = $arr['satuanbesar'];
                 // $satuan_sedang = $arr['satuansedang'];
                 // $satuan_kecil = $arr['satuankecil'];
