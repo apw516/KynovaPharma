@@ -821,22 +821,22 @@ class GudangController extends Controller
             //     echo json_encode($response);
             //     die;
             // }
-            if ($a['rasiosedang'] == '' || $a['rasiosedang'] == 0) {
-                $response = [
-                    'kode' => 500,
-                    'message' => 'Rasio sedang belum diisi !'
-                ];
-                echo json_encode($response);
-                die;
-            }
-            if ($a['rasiokecil'] == '' || $a['rasiokecil'] == 0) {
-                $response = [
-                    'kode' => 500,
-                    'message' => 'Rasio kecil belum diisi !'
-                ];
-                echo json_encode($response);
-                die;
-            }
+            // if ($a['rasiosedang'] == '' || $a['rasiosedang'] == 0) {
+            //     $response = [
+            //         'kode' => 500,
+            //         'message' => 'Rasio sedang belum diisi !'
+            //     ];
+            //     echo json_encode($response);
+            //     die;
+            // }
+            // if ($a['rasiokecil'] == '' || $a['rasiokecil'] == 0) {
+            //     $response = [
+            //         'kode' => 500,
+            //         'message' => 'Rasio kecil belum diisi !'
+            //     ];
+            //     echo json_encode($response);
+            //     die;
+            // }
         }
         DB::beginTransaction();
         try {
