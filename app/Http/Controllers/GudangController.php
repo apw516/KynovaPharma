@@ -797,30 +797,30 @@ class GudangController extends Controller
             }
         }
         foreach ($arrayobat as $a) {
-            if ($a['satuanbesar'] == '') {
-                $response = [
-                    'kode' => 500,
-                    'message' => 'Pilih satuan besar !'
-                ];
-                echo json_encode($response);
-                die;
-            }
-            if ($a['satuansedang'] == '') {
-                $response = [
-                    'kode' => 500,
-                    'message' => 'Pilih satuan sedang !'
-                ];
-                echo json_encode($response);
-                die;
-            }
-            if ($a['satuankecil'] == '') {
-                $response = [
-                    'kode' => 500,
-                    'message' => 'Pilih satuan kecil !'
-                ];
-                echo json_encode($response);
-                die;
-            }
+            // if ($a['satuanbesar'] == '') {
+            //     $response = [
+            //         'kode' => 500,
+            //         'message' => 'Pilih satuan besar !'
+            //     ];
+            //     echo json_encode($response);
+            //     die;
+            // }
+            // if ($a['satuansedang'] == '') {
+            //     $response = [
+            //         'kode' => 500,
+            //         'message' => 'Pilih satuan sedang !'
+            //     ];
+            //     echo json_encode($response);
+            //     die;
+            // }
+            // if ($a['satuankecil'] == '') {
+            //     $response = [
+            //         'kode' => 500,
+            //         'message' => 'Pilih satuan kecil !'
+            //     ];
+            //     echo json_encode($response);
+            //     die;
+            // }
             if ($a['rasiosedang'] == '' || $a['rasiosedang'] == 0) {
                 $response = [
                     'kode' => 500,
@@ -871,9 +871,9 @@ class GudangController extends Controller
                 $mt_barang = Medicine::where('id', $arr['idbarang'])->get()->first();
                 $rasio_sedang = $arr['rasiosedang'];
                 $rasio_kecil = $arr['rasiokecil'];
-                $satuan_besar = $arr['satuanbesar'];
-                $satuan_sedang = $arr['satuansedang'];
-                $satuan_kecil = $arr['satuankecil'];
+                // $satuan_besar = $arr['satuanbesar'];
+                // $satuan_sedang = $arr['satuansedang'];
+                // $satuan_kecil = $arr['satuankecil'];
                 $stok_besar = $arr['stokb'];
                 $stok_sedang = $arr['stoks'];
                 $stok_kecil = $arr['stokk'];
