@@ -861,9 +861,13 @@ class GudangController extends Controller
             ];
             $hh = po_header::create($data_header);
             foreach ($arrayobat as $arr) {
+                $harga = $arr['hargajualasli'];
                 $pajak = 0;
-                $pajak_rupiah = $arr['hargamodalasli'] * $pajak / 100;
-                $harganya = $arr['hargamodalasli'] + $pajak_rupiah;
+                $harga_modal = $harga - 2000;
+                // $pajak_rupiah = $arr['hargamodalasli'] * $pajak / 100;
+                $pajak_rupiah = $harga_modal * $pajak / 100;
+                $harganya = $harga_modal + $pajak_rupiah;
+                // $harganya = $arr['hargamodalasli'] + $pajak_rupiah;
                 $mt_barang = Medicine::where('id', $arr['idbarang'])->get()->first();
                 $rasio_sedang = $arr['rasiosedang'];
                 $rasio_kecil = $arr['rasiokecil'];
@@ -909,7 +913,6 @@ class GudangController extends Controller
                 // $cek_sediaan = db::select('select id,stok_sekarang   from mt_sediaan_obat where kode_barang = ? and kode_supplier = ? and tgl_expired = ? and kode_batch = ? and harga_modal_satuan_besar = ?', [$arr['kode_barang'], $datasupplier['kodesupplier'], $arr['expireddate'], $arr['kodebatch'], $harganya]);
 
                 // $mt_barang = db::select('select rasio_sedang,rasio_kecil from mt_barang where id = ?', [$arr['idbarang']]);
-                $harga = $arr['hargajualasli'];
                 if ($harga > 0) {
                     $harga_jual = $harga / $rasio_kecil;
                     Medicine::where('kode_barang', $mt_barang['kode_barang'])->update([
