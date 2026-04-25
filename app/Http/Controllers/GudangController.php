@@ -894,12 +894,14 @@ class GudangController extends Controller
                     'nama_barang' => $mt_barang['nama_dagang'],
                     'qty' => $stok_masuk,
                     //jumlahpersatuanbesar
-                    'satuan' => $arr['satuanbesar'],
+                    'satuan' => 'STR',
+                    // 'satuan' => $arr['satuanbesar'],
                     'harga_beli' => $harganya,
                     //harga satu box
                     'diskon_persen' => 0,
                     'diskon_rupiah' => 0,
-                    'no_batch' => $arr['nobatch'],
+                    'no_batch' => $mt_barang['kode_barang'],
+                    // 'no_batch' => $arr['nobatch'],
                     'tgl_expired' => $arr['ed']
                 ];
                 $po_detail = po_detail::create($data_detail);
@@ -911,22 +913,33 @@ class GudangController extends Controller
                 if ($harga > 0) {
                     $harga_jual = $harga / $rasio_kecil;
                     Medicine::where('kode_barang', $mt_barang['kode_barang'])->update([
-                        'rasio_sedang' => $arr['rasiosedang'],
-                        'rasio_kecil' => $arr['rasiokecil'],
-                        'satuan_besar' => $arr['satuanbesar'],
-                        'satuan_sedang' => $arr['satuansedang'],
-                        'satuan_kecil' => $arr['satuankecil'],
-                        'sediaan' => $arr['satuankecil'],
+                        'rasio_sedang' => 1,
+                        'rasio_kecil' => 1,
+                        'satuan_besar' => 'STR',
+                        'satuan_sedang' => 'STR',
+                        'satuan_kecil' => 'STR',
+                        // 'rasio_sedang' => $arr['rasiosedang'],
+                        // 'rasio_kecil' => $arr['rasiokecil'],
+                        // 'satuan_besar' => $arr['satuanbesar'],
+                        // 'satuan_sedang' => $arr['satuansedang'],
+                        // 'satuan_kecil' => $arr['satuankecil'],
+                        'sediaan' => 'STR',
                         'harga_jual' => $harga_jual
                     ]);
                 } else {
                     Medicine::where('kode_barang', $mt_barang['kode_barang'])->update([
-                        'rasio_sedang' => $arr['rasiosedang'],
-                        'rasio_kecil' => $arr['rasiokecil'],
-                        'satuan_besar' => $arr['satuanbesar'],
-                        'satuan_sedang' => $arr['satuansedang'],
-                        'satuan_kecil' => $arr['satuankecil'],
-                        'sediaan' => $arr['satuankecil']
+                        'rasio_sedang' => 1,
+                        'rasio_kecil' => 1,
+                        'satuan_besar' => 'STR',
+                        'satuan_sedang' => 'STR',
+                        'satuan_kecil' => 'STR',
+                        'sediaan' => 'STR',
+                        // 'rasio_sedang' => $arr['rasiosedang'],
+                        // 'rasio_kecil' => $arr['rasiokecil'],
+                        // 'satuan_besar' => $arr['satuanbesar'],
+                        // 'satuan_sedang' => $arr['satuansedang'],
+                        // 'satuan_kecil' => $arr['satuankecil'],
+                        // 'sediaan' => $arr['satuankecil']
                     ]);
                 }
                 $harga_sedang = $harganya / $rasio_sedang;
@@ -957,7 +970,8 @@ class GudangController extends Controller
                     //harga_satuan_sedang
                     'harga_modal_satuan_kecil' => $harga_kecil,
                     //harga_satuan_kecil
-                    'kode_batch' => $arr['nobatch'],
+                    // 'kode_batch' => $arr['nobatch'],
+                    'kode_batch' => $mt_barang['kode_barang'],
                     'stok_awal' => 0,
                     'stok_sekarang' => $stok_in,
                     //stok satuan kecil
