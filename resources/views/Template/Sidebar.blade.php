@@ -47,6 +47,13 @@
                 </li>
                 <li class="nav-header">KASIR</li>
                 <li class="nav-item">
+                    <a href="{{ route('indexkasir2')}}"
+                        class="nav-link @if ($menu == 'kasir2') active @endif">
+                        <i class="nav-icon bi bi-file-bar-graph-fill"></i>
+                        <p>Kasir2</p></h3>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('indexkasir')}}"
                         class="nav-link @if ($menu == 'kasir') active @endif">
                         <i class="nav-icon bi bi-file-bar-graph-fill"></i>

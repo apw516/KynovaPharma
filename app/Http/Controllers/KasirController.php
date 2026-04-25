@@ -59,6 +59,170 @@ class KasirController extends Controller
             'upcoming_count'
         ]));
     }
+    public function indexkasir2()
+    {
+        $now = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+        $date_start = $now->format('Y-m-d');
+        $date_end = $end->format('Y-m-d');
+        $menu = 'kasir2';
+        $date = $this->get_date2();
+        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+
+        $notif_ed = DB::table('mt_sediaan_obat')
+            ->whereBetween(DB::raw('DATE(tgl_expired)'), [now(), now()->addDays(90)])
+            ->count();
+
+        // Ambil semua PO yang belum Lunas (Tanpa batas tanggal awal)
+        $hutang_data = DB::table('ts_po_header')
+            ->where('status_bayar', '!=', '1')
+            ->where('status', 1) // 1 = PO Aktif/Disetujui
+            ->get();
+
+        // Hitung total notif untuk Alert
+        $notif_hutang = $hutang_data->count();
+
+        // Pisahkan mana yang sudah lewat (Overdue) dan mana yang mendekati (Jatuh Tempo)
+        $overdue_count = $hutang_data->where('tanggal_pembayaran', '<', now()->format('Y-m-d'))->count();
+        $upcoming_count = $hutang_data->where('tanggal_pembayaran', '>=', now()->format('Y-m-d'))->count();
+
+        $total_notif = $notif_ed + $notif_hutang;
+
+        return view('Kasir.indexkasir2', compact([
+            'menu',
+            'date_start',
+            'date_end',
+            'get_sesi',
+            'notif_ed',
+            'notif_hutang',
+            'total_notif',
+            'overdue_count',
+            'upcoming_count'
+        ]));
+    }
+    public function searchByBatch(Request $request)
+    {
+        $batch = $request->batch;
+
+        $data = DB::connection('mysql')->table('mt_sediaan_obat as p')
+            ->join('mt_barang as b', 'p.kode_barang', '=', 'b.kode_barang')
+            ->select('b.rasio_sedang', 'b.rasio_kecil', 'p.kode_barang', 'p.kode_batch', 'b.nama_dagang', 'b.satuan_besar', 'b.satuan_sedang', 'b.satuan_kecil', 'b.harga_jual')
+            ->where('p.kode_batch', $batch)
+            ->first();
+
+        if ($data) {
+            return response()->json(['success' => true, 'data' => $data]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Data tidak ditemukan']);
+    }
+    public function simpanpenjualan(Request $request)
+    {
+        // 1. Validasi Request
+        if (!$request->items || count($request->items) == 0) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada item untuk dibeli.']);
+        }
+
+        // Gunakan Transaction agar data aman
+        DB::beginTransaction();
+
+        try {
+            $no_invoice = $this->get_inv();
+            $kembalian = $request->uang_bayar - $request->total_akhir;
+            $gt = $request->total_akhir;
+            $uang = $request->uang_bayar;
+            $data_header = [
+                'no_invoice' => $no_invoice,
+                'tgl_transaksi' => $this->get_now(),
+                'id_sesi_kasir' => $request->id_sesi,
+                'id_user' => auth()->user()->id,
+                'total_harga' => $request->total_akhir,
+                'diskon' => 0,
+                'pajak_ppn' => 0,
+                'total_bayar' => $request->total_akhir,
+                'nominal_terima' => $request->uang_bayar,
+                'nominal_kembali' => $kembalian,
+                'status' => '0',
+            ];
+            $header = model_ts_header::create($data_header);
+            $headerid = $header->id;
+            foreach ($request->items as $item) {
+                $kode_barang = $item['kode_barang'];
+                $mt_barang = Medicine::where('kode_barang', $kode_barang)->first();
+                $satuan = $item['satuan'];
+                if ($satuan == 'besar') {
+                    $qtybesar = $mt_barang['rasio_sedang'] * $mt_barang['rasio_kecil'];
+                    $qty = $qtybesar * $item['qty'];
+                } elseif ($satuan == 'sedang') {
+                    $besarnya = $mt_barang['rasio_sedang'] * $mt_barang['rasio_kecil'];
+                    $qtysedang = $besarnya / $mt_barang['rasio_sedang'];
+                    $qty = $qtysedang * $item['qty'];
+                } else {
+                    $qty = $item['qty'];
+                }
+                $diskon = 0;
+                $nama_barang = $item['nama_barang'];
+                $kode_barang = $kode_barang;
+                $qty_dibutuhkan = $qty; // Misal: 10
+                // Ambil semua sediaan yang stoknya > 0, urutkan dari ED terdekat (FEFO)
+                $semua_sediaan = model_sediaan_barang::where('kode_barang', $kode_barang)
+                    ->where('stok_sekarang', '>', 0)
+                    ->where('kode_batch', $item['kode_batch'])
+                    ->orderBy('tgl_expired', 'asc')
+                    ->get();
+                foreach ($semua_sediaan as $sediaan) {
+                    if ($qty_dibutuhkan <= 0) break; // Jika sudah terpenuhi, berhenti
+                    if ($sediaan->stok_sekarang >= $qty_dibutuhkan) {
+                        // Jika stok di batch ini cukup untuk menutupi sisa kebutuhan
+                        $sediaan->stok_sekarang -= $qty_dibutuhkan;
+                        $sediaan->save();
+                        // Catat log transaksi (ambil $qty_dibutuhkan)
+                        $this->catatLog($sediaan->id, $qty_dibutuhkan, $header->id, $diskon);
+                        $qty_dibutuhkan = 0; // Kebutuhan terpenuhi
+                    } else {
+                        // Jika stok di batch ini tidak cukup, ambil semua yang ada
+                        $ambil = $sediaan->stok_sekarang;
+                        $qty_dibutuhkan -= $ambil; // Kurangi sisa kebutuhan
+                        $sediaan->stok_sekarang = 0; // Habiskan stok batch ini
+                        $sediaan->save();
+                        // Catat log transaksi (ambil sebesar $ambil)
+                        $this->catatLog($sediaan->id, $ambil, $header->id, $diskon);
+                    }
+                }
+                if ($qty_dibutuhkan > 0) {
+                    // Jika setelah semua batch dicek stok masih kurang
+                    // return response()->json(['message' => 'Stok total tidak mencukupi!'], 400);
+                    // $html = view('Kasir.view_kembalian', compact(['gt', 'uang']))->render();
+                    throw new \Exception('Stok ' . $nama_barang . ' tidak mencukupi!');
+                    $response = [
+                        'code' => 500,
+                        'html' => '',
+                        'message' => 'Stok ' . $nama_barang . ' total tidak mencukupi!'
+                    ];
+                    echo json_encode($response);
+                    die;
+                }
+            }
+
+            // Jika semua lancar, komit data
+
+            model_ts_header::where('id', $header->id)->update(['status' => 1]);
+            $headerid = $header->id;
+            // $html = view('Kasir.view_kembalian', compact(['gt', 'uang', 'headerid']))->render();
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaksi berhasil disimpan!',
+                'id_penjualan' => $headerid // Bisa digunakan untuk print struk
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
+        }
+    }
     public function indexlogsesikasir()
     {
         $now = Carbon::now()->startOfMonth();
@@ -261,7 +425,7 @@ class KasirController extends Controller
             echo json_encode($response);
             die;
         }
-        $hasil_transaksi = []; 
+        $hasil_transaksi = [];
         $gt = 0;
         foreach ($arrayobat as $d) {
             $mt_barang = db::select('select * from mt_barang where kode_barang = ?', [$d['kode_barang']]);
@@ -293,7 +457,7 @@ class KasirController extends Controller
             ];
         }
         $v_gt = number_format($gt, 0, ',', '.');
-        $html = view('Kasir.hasil_proses', compact(['gt', 'v_gt','hasil_transaksi']))->render();
+        $html = view('Kasir.hasil_proses', compact(['gt', 'v_gt', 'hasil_transaksi']))->render();
         $response = [
             'code' => 200,
             'html' => $html,

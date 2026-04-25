@@ -71,6 +71,7 @@ Route::post('/simpandatainject', [GudangController::class, 'simpandatainject'])-
 
 
 
+Route::get('/indexkasir2', [KasirController::class, 'indexkasir2'])->name('indexkasir2');
 Route::get('/indexkasir', [KasirController::class, 'Index'])->name('indexkasir');
 Route::get('/indexlogsesikasir', [KasirController::class, 'indexlogsesikasir'])->name('indexlogsesikasir');
 Route::get('/logtransaksikasir', [KasirController::class, 'logtransaksikasir'])->name('logtransaksikasir');
@@ -88,6 +89,8 @@ Route::post('/returheader', [KasirController::class, 'returheader'])->name('retu
 Route::post('/returdetail', [KasirController::class, 'returdetail'])->name('returdetail');
 Route::post('/ambilriwayatkartustok', [KasirController::class, 'ambilriwayatkartustok'])->name('ambilriwayatkartustok');
 Route::get('/transaksi/cetak/{id}', [KasirController::class, 'cetakStruk'])->name('transaksi.cetak');
+Route::get('pembelian.searchBatch', [KasirController::class, 'searchByBatch'])->name('pembelian.searchBatch');
+Route::post('simpan.penjualan', [KasirController::class, 'simpanpenjualan'])->name('simpan.penjualan');
 
 Route::get('/indexlaporansesikasir', [LaporanController::class, 'indexlaporansesikasir'])->name('indexlaporansesikasir');
 Route::get('/indexlaporantransaksipenjualan', [LaporanController::class, 'Index'])->name('indexlaporantransaksipenjualan');
