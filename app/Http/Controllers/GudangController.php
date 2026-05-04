@@ -176,7 +176,8 @@ class GudangController extends Controller
             }
             // 4. Render partial view menjadi string HTML
             // Kita kirim data ke file blade khusus untuk baris tabel
-            $view = view('Gudang.tabel_stok_persediaan_barang', compact('data'))->render();
+            $supplier = Supplier::get();
+            $view = view('Gudang.tabel_stok_persediaan_barang', compact('data', 'supplier'))->render();
             return response()->json([
                 'kode' => 200,
                 'message' => 'Data berhasil dimuat.',
@@ -784,6 +785,85 @@ class GudangController extends Controller
             })
             ->rawColumns(['action'])
             ->make(true);
+    }
+    public function simpaneditsediaan(Request $request)
+    {
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama2) {
+            $index2 = $nama2['name'];
+            $value2 = $nama2['value'];
+            $dataSet2[$index2] = $value2;
+        }
+        DB::beginTransaction();
+        try {
+            $data_sediaan = [
+                'kode_batch' => $dataSet2['nomorbatch'],
+                'tgl_expired' => $dataSet2['tanggaled'],
+                'kode_supplier' => $dataSet2['kode_supplier'],
+            ];
+            model_sediaan_barang::where('id', $dataSet2['idsediaan'])->update($data_sediaan);
+            if ($dataSet2['koreksistok'] == 1) {
+                $stok_out = $dataSet2['stoksekarang'];
+                $stok_in = $dataSet2['stokkoreksi'];
+                $kode_barang = $dataSet2['kode_barang'];
+                $mt_barang = Medicine::where('kode_barang', $kode_barang)->first();
+
+                $get_sediaan = model_sediaan_barang::where('id', $dataSet2['idsediaan'])->first();
+                $log_terakhir = DB::table('log_transaksi_stok')
+                    ->where('kode_barang', $kode_barang)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                $stok_sebelumnya = $log_terakhir ? $log_terakhir->stok_now : $get_sediaan->stok_now;
+                $data_log = [
+                    'id_dokumen' => '',
+                    'kode_barang' => $kode_barang,
+                    'stok_in' => '0',
+                    'stok_out' => $stok_out,
+                    'stok_last' => $stok_sebelumnya,
+                    'stok_now' => $stok_sebelumnya - $stok_out,
+                    'tgl_input' => $this->get_now(),
+                    'keterangan' => 'Koreksi Stok',
+                    'id_sediaan' => $dataSet2['idsediaan'],
+                    'harga_jual' => $mt_barang->harga_jual,
+                    'harga_modal' => $get_sediaan->harga_modal_satuan_kecil
+                ];
+                model_log_transaksi_stok::create($data_log);
+                $log_terakhir_2 = DB::table('log_transaksi_stok')
+                    ->where('kode_barang', $kode_barang)
+                    ->orderBy('id', 'desc')
+                    ->first();
+                $stok_sebelumnya_2 = $log_terakhir_2 ? $log_terakhir_2->stok_now : $get_sediaan->stok_now;
+                $data_log_2 = [
+                    'id_dokumen' => '',
+                    'kode_barang' => $kode_barang,
+                    'stok_in' => $stok_in,
+                    'stok_out' => 0,
+                    'stok_last' => $stok_sebelumnya_2,
+                    'stok_now' => $stok_sebelumnya_2 + $stok_in,
+                    'tgl_input' => $this->get_now(),
+                    'keterangan' => 'Koreksi Stok',
+                    'id_sediaan' => $dataSet2['idsediaan'],
+                    'harga_jual' => $mt_barang->harga_jual,
+                    'harga_modal' => $get_sediaan->harga_modal_satuan_kecil
+                ];
+                model_log_transaksi_stok::create($data_log_2);
+                model_sediaan_barang::where('id',$dataSet2['idsediaan'])->update(['stok_sekarang' => $stok_in,'stok_awal' => $stok_sebelumnya]);
+            }
+            DB::commit();
+            $response = [
+                'code' => 200,
+                'message' => 'sukses'
+            ];
+            echo json_encode($response);
+            die;
+        } catch (\Exception $e) {
+            // JIKA TERJADI ERROR, BATALKAN SEMUA PROSES
+            DB::rollback();
+            return response()->json([
+                'code' => 500,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
+        }
     }
     public function simpandatainject(Request $requesrt)
     {

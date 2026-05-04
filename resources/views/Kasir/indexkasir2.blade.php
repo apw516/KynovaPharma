@@ -182,7 +182,6 @@
 
             return split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
         }
-
         // Event Delegation: Memantau class .input-mask-uang meski baru ditambahkan
         $(document).on('keyup', '.input-mask-uang', function() {
             let nilai = $(this).val();

@@ -68,6 +68,7 @@ Route::post('/ambildatastokretur', [GudangController::class, 'ambildatastokretur
 Route::post('/ambilstokpersediaanbarang', [GudangController::class, 'ambilstokpersediaanbarang'])->name('ambilstokpersediaanbarang');
 Route::get('/getdatabarang_opname', [GudangController::class, 'getdatabarang_opname'])->name('getdatabarang_opname');
 Route::post('/simpandatainject', [GudangController::class, 'simpandatainject'])->name('simpandatainject');
+Route::post('/simpaneditsediaan', [GudangController::class, 'simpaneditsediaan'])->name('simpaneditsediaan');
 
 
 
