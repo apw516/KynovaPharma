@@ -161,7 +161,7 @@
         </tr>
         <tr>
             <td colspan="2" style="font-size: 10px; color: #333; padding-bottom: 4px;" style="font-weight:bold">
-                {{ $teks_qty }}
+                <strong>{{ $teks_qty }}</strong>
             </td>
             <td class="text-right" style="vertical-align: bottom; padding-bottom: 4px;" style="font-weight:bold">
                 {{ number_format($item->subtotal, 0, ',', '.') }}
@@ -189,11 +189,11 @@
                 <span style="font-weight:bold">{{ number_format($header->total_bayar, 0, ',', '.') }}</span>
             </div>
             <div class="total-row">
-                <span>Tunai</span>
+                <span style="font-weight:bold">Tunai</span>
                 <span style="font-weight:bold">{{ number_format($header->nominal_terima, 0, ',', '.') }}</span>
             </div>
             <div class="total-row">
-                <span>Kembali</span>
+                <span style="font-weight:bold">Kembali</span>
                 <span style="font-weight:bold">{{ number_format($header->nominal_kembali, 0, ',', '.') }}</span>
             </div>
         </div>
