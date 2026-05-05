@@ -99,16 +99,15 @@
 
     <div class="ticket">
         <div class="text-center">
-            <div class="brand">KYNOVAPHARMA</div>
-            <div class="info">
-                Jl. Raya xxxx No. 123, Cirebon<br>
-                Telp: 0812-xxxx-xxxx
+            <div class="brand">APOTEK FALIH FARMA</div>
+            <div class="info" style="font-weight:bold">
+                Jl. Once RT 001 RW 002 DESA KUBANGKARANG KEC. KARANGSEMBUNG KAB.CIREBON<br>
             </div>
         </div>
 
         <div class="divider"></div>
 
-        <div class="info">
+        <div class="info" style="font-weight:bold">
             No : {{ $header->no_invoice }}<br>
             Tgl : {{ date('d/m/Y H:i', strtotime($header->tgl_transaksi)) }}<br>
             Kasir: {{ Auth::user()->nama ?? 'Admin' }}<br>
@@ -161,10 +160,10 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="font-size: 10px; color: #333; padding-bottom: 4px;">
+            <td colspan="2" style="font-size: 10px; color: #333; padding-bottom: 4px;" style="font-weight:bold">
                 {{ $teks_qty }}
             </td>
-            <td class="text-right" style="vertical-align: bottom; padding-bottom: 4px;">
+            <td class="text-right" style="vertical-align: bottom; padding-bottom: 4px;" style="font-weight:bold">
                 {{ number_format($item->subtotal, 0, ',', '.') }}
             </td>
         </tr>
@@ -176,32 +175,32 @@
 
         <div class="totals">
             <div class="total-row">
-                <span>Subtotal</span>
-                <span>{{ number_format($header->total_harga, 0, ',', '.') }}</span>
+                <span style="font-weight:bold">Subtotal</span>
+                <span style="font-weight:bold">{{ number_format($header->total_harga, 0, ',', '.') }}</span>
             </div>
             @if ($header->diskon > 0)
-                <div class="total-row">
-                    <span>Potongan</span>
-                    <span>-{{ number_format($header->diskon, 0, ',', '.') }}</span>
+                <div class="total-row" style="font-weight:bold">
+                    <span style="font-weight:bold">Potongan</span>
+                    <span style="font-weight:bold">-{{ number_format($header->diskon, 0, ',', '.') }}</span>
                 </div>
             @endif
             <div class="total-row grand-total">
                 <span>TOTAL</span>
-                <span>{{ number_format($header->total_bayar, 0, ',', '.') }}</span>
+                <span style="font-weight:bold">{{ number_format($header->total_bayar, 0, ',', '.') }}</span>
             </div>
             <div class="total-row">
                 <span>Tunai</span>
-                <span>{{ number_format($header->nominal_terima, 0, ',', '.') }}</span>
+                <span style="font-weight:bold">{{ number_format($header->nominal_terima, 0, ',', '.') }}</span>
             </div>
             <div class="total-row">
                 <span>Kembali</span>
-                <span>{{ number_format($header->nominal_kembali, 0, ',', '.') }}</span>
+                <span style="font-weight:bold">{{ number_format($header->nominal_kembali, 0, ',', '.') }}</span>
             </div>
         </div>
 
         <div class="divider"></div>
 
-        <div class="footer text-center">
+        <div class="footer text-center" style="font-weight:bold">
             Terima Kasih Atas Kunjungan Anda<br>
             <strong>Semoga Lekas Sembuh</strong><br>
             Simpan struk ini sebagai bukti pembayaran sah.
