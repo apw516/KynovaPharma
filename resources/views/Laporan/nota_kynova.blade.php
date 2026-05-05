@@ -160,7 +160,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="font-size: 10px; color: #333; padding-bottom: 4px;font-weight:bold">
+            <td colspan="2" style="font-size: 10px; color: #000000; padding-bottom: 4px;font-weight:bold">
                 <strong>{{ $teks_qty }}</strong>
             </td>
             <td class="text-right" style="vertical-align: bottom; padding-bottom: 4px;font-weight:bold">
