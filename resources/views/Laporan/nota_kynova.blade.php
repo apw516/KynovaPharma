@@ -160,10 +160,10 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="font-size: 10px; color: #333; padding-bottom: 4px;" style="font-weight:bold">
+            <td colspan="2" style="font-size: 10px; color: #333; padding-bottom: 4px;font-weight:bold">
                 <strong>{{ $teks_qty }}</strong>
             </td>
-            <td class="text-right" style="vertical-align: bottom; padding-bottom: 4px;" style="font-weight:bold">
+            <td class="text-right" style="vertical-align: bottom; padding-bottom: 4px;font-weight:bold">
                 {{ number_format($item->subtotal, 0, ',', '.') }}
             </td>
         </tr>
