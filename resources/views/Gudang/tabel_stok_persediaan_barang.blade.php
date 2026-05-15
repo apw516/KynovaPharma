@@ -70,13 +70,21 @@
                         <tr>
                             <td class="ps-4">
                                 <div class="fw-bold text-dark">{{ $r->nama_dagang }}</div>
-                                <small class="text-muted">{{ $r->nama_obat }} | {{ $r->produsen }}</small>
+                                <small class="text-muted">{{ $r->nama_obat }} | {{ $r->produsen }}</small><br>
+                                Satuan Besar : {{ $r->satuan_besar }} ( modal : @
+                                {{ number_format($r->harga_modal_satuan_besar, 0, 0) }} )<br>
+                                Satuan Sedang : {{ $r->satuan_sedang }} ( modal : @
+                                {{ number_format($r->harga_modal_satuan_sedang, 0, 0) }} ) <br>
+                                Satuan Kecil : {{ $r->satuan_kecil }} ( modal : @
+                                {{ number_format($r->harga_modal_satuan_kecil, 0, 0) }} )
                             </td>
                             <td class="text-center">
                                 <code class="fw-bold text-primary">{{ $r->kode_batch }}</code>
-                                <button class="btn btn-secondary btn-sm editsediaan" batch="{{ $r->kode_batch }}" kode_barang="{{ $r->kode_barang }}"
-                                    stoksekarang="{{ $r->stok_sekarang }}" ed="{{ $tgl_ed->format('Y-m-d') }}"
-                                    kode_supplier="{{ $r->kode_supplier }}" idsediaan="{{ $r->id }}">
+                                <button class="btn btn-secondary btn-sm editsediaan" batch="{{ $r->kode_batch }}"
+                                    kode_barang="{{ $r->kode_barang }}" stoksekarang="{{ $r->stok_sekarang }}"
+                                    ed="{{ $tgl_ed->format('Y-m-d') }}" kode_supplier="{{ $r->kode_supplier }}"
+                                    idsediaan="{{ $r->id }}" harga_modal="{{ $r->harga_modal_satuan_besar }}"
+                                    harga_modal_disp="{{ number_format($r->harga_modal_satuan_besar, 0, 0) }}">
                                     <i class="bi bi-pencil-square"></i></button>
                             </td>
                             <td class="text-center small">{{ $r->nama_supplier }}</td>
@@ -170,6 +178,11 @@
                                 <option value="{{ $s->kode_supplier }}">{{ $s->nama_supplier }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Harga Modal / Satuan Besar </label>
+                        <input type="text" class="form-control input-mask-uang" id="modal" name="modal">
+                        <input hidden type="text" class="form-control nilai-asli" id="modalasli" name="modalasli">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Koreksi Stok</label> <br>
@@ -314,6 +327,35 @@
         // Rapikan tampilan input search
         $('.dataTables_filter input').addClass('form-control shadow-none');
     });
+
+    function formatRupiah(angka) {
+        let number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split = number_string.split(','),
+            sisa = split[0].length % 3,
+            rupiah = split[0].substr(0, sisa),
+            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            let separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        return split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    }
+
+    // Event Delegation: Memantau class .input-mask-uang meski baru ditambahkan
+    $(document).on('keyup', '.input-mask-uang', function() {
+        let nilai = $(this).val();
+
+        // 1. Format tampilan (tambah titik)
+        $(this).val(formatRupiah(nilai));
+
+        // 2. Ambil angka bersih (tanpa titik)
+        let angkaBersih = nilai.replace(/\./g, '');
+
+        // 3. Masukkan ke hidden input di sebelahnya agar terkirim ke server
+        $(this).siblings('.nilai-asli').val(angkaBersih);
+    });
 </script>
 <script>
     $('.editsediaan').on('click', function() {
@@ -323,6 +365,11 @@
         let tanggaled = $(this).attr('ed');
         let batch = $(this).attr('batch');
         let kode_supplier = $(this).attr('kode_supplier');
+        let harga_modal2 = $(this).attr('harga_modal');
+        let harga_modal_disp = $(this).attr('harga_modal_disp');
+        $('#modal').val(harga_modal_disp)
+        $('#modalasli').val(harga_modal2)
+
         $('#idsediaan').val(id)
         $('#nomorbatch').val(batch)
         $('#tanggaled').val(tanggaled)

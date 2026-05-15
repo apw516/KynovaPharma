@@ -454,21 +454,26 @@ class GudangController extends Controller
         }
         $grandtotal = 0;
         foreach ($arrayobat as $d) {
+            // 1. Hitung Gross (Harga x Qty)
             $subtotal = $d['hargabeliasli'] * $d['qty'];
+
+            // 2. Tentukan Potongan
+            $potongan = 0;
             if ($d['diskonrupiahasli'] != 0) {
-                $subtotal = $subtotal - $d['diskonrupiahasli'];
-            } else {
-                if ($d['diskonpersen'] != 0) {
-                    $hargadiskon = $d['hargabeliasli'] * $d['diskonpersen'];
-                    $hargadiskonfinal = $hargadiskon / 100;
-                    $subtotal = $subtotal - $hargadiskonfinal;
-                } else {
-                    $subtotal = $subtotal;
-                }
+                // Jika diskon rupiah adalah TOTAL per baris
+                $potongan = $d['diskonrupiahasli'];
+            } elseif ($d['diskonpersen'] != 0) {
+                // Diskon persen dikalikan ke TOTAL subtotal (agar qty ikut terhitung)
+                $potongan = ($subtotal * $d['diskonpersen']) / 100;
             }
-            $grandtotal = $grandtotal + $subtotal;
-            $vgt = number_format($grandtotal, 0, 0);
+
+            // 3. Subtotal Netto per baris
+            $subtotal_netto = $subtotal - $potongan;
+
+            // 4. Akumulasi
+            $grandtotal += $subtotal_netto;
         }
+        $vgt = number_format($grandtotal, 0, ',', '.');
         if ($dataheader['diskonlobalpersen'] > 0) {
             $diskonglobal = $grandtotal * $dataheader['diskonlobalpersen'] / 100;
             $grandtotal_baru = $grandtotal - $diskonglobal;
@@ -796,10 +801,18 @@ class GudangController extends Controller
         }
         DB::beginTransaction();
         try {
+            $mt_barang = medicine::where('kode_barang',$dataSet2['kode_barang'])->get()->first();
+            $rasio_sedang = $mt_barang->rasio_sedang;
+            $rasio_kecil = $mt_barang->rasio_kecil;
+            $harga_sedang = $dataSet2['modalasli'] / $rasio_sedang;
+            $harga_kecil = $harga_sedang / $rasio_kecil;
             $data_sediaan = [
                 'kode_batch' => $dataSet2['nomorbatch'],
                 'tgl_expired' => $dataSet2['tanggaled'],
                 'kode_supplier' => $dataSet2['kode_supplier'],
+                'harga_modal_satuan_besar' => $dataSet2['modalasli'],
+                'harga_modal_satuan_sedang' => $harga_sedang,
+                'harga_modal_satuan_kecil' => $harga_kecil,
             ];
             model_sediaan_barang::where('id', $dataSet2['idsediaan'])->update($data_sediaan);
             if ($dataSet2['koreksistok'] == 1) {
@@ -847,7 +860,7 @@ class GudangController extends Controller
                     'harga_modal' => $get_sediaan->harga_modal_satuan_kecil
                 ];
                 model_log_transaksi_stok::create($data_log_2);
-                model_sediaan_barang::where('id',$dataSet2['idsediaan'])->update(['stok_sekarang' => $stok_in,'stok_awal' => $stok_sebelumnya]);
+                model_sediaan_barang::where('id', $dataSet2['idsediaan'])->update(['stok_sekarang' => $stok_in, 'stok_awal' => $stok_sebelumnya]);
             }
             DB::commit();
             $response = [

@@ -95,28 +95,44 @@ class DataMasterController extends Controller
     }
     public function getdatabarang3()
     {
-        // Query langsung ke tabel mt_barang tanpa join/relasi
-        $data = Medicine::select([
-            'mt_barang.id',
-            'mt_barang.nama_obat',
-            'mt_barang.kode_barang',
-            'mt_barang.nama_dagang', // Sesuaikan dengan nama kolom asli di tabel mt_barang
-            'mt_barang.produsen',
-            'mt_barang.satuan_besar',
-            'mt_barang.satuan_sedang',
-            'mt_barang.rasio_sedang',
-            'mt_barang.rasio_kecil',
-            'mt_barang.satuan_kecil',
-            'mt_barang.aturan_pakai',
-            'mt_barang.sediaan',
-            'mt_barang.harga_modal',
-            'mt_barang.harga_jual',
-            'mt_barang.margin_penjualan',
-            DB::raw('(SELECT stok_now FROM log_transaksi_stok 
-                  WHERE log_transaksi_stok.kode_barang = mt_barang.kode_barang 
-                  ORDER BY id DESC LIMIT 1) as stok_terakhir')
-        ])->havingRaw('stok_terakhir > 0');;
-
+        $data = Medicine::leftJoin('mt_sediaan_obat', 'mt_barang.kode_barang', '=', 'mt_sediaan_obat.kode_barang')
+            ->select([
+                'mt_barang.id',
+                'mt_barang.nama_obat',
+                'mt_barang.kode_barang',
+                'mt_barang.nama_dagang',
+                'mt_barang.produsen',
+                'mt_barang.satuan_besar',
+                'mt_barang.satuan_sedang',
+                'mt_barang.rasio_sedang',
+                'mt_barang.rasio_kecil',
+                'mt_barang.satuan_kecil',
+                'mt_barang.aturan_pakai',
+                'mt_barang.sediaan',
+                'mt_barang.harga_modal',
+                'mt_barang.harga_jual',
+                'mt_barang.margin_penjualan',
+                // Agregasi SUM langsung dari join
+                DB::raw('SUM(mt_sediaan_obat.stok_sekarang) as stok_terakhir')
+            ])
+            ->groupBy([
+                'mt_barang.id',
+                'mt_barang.nama_obat',
+                'mt_barang.kode_barang',
+                'mt_barang.nama_dagang',
+                'mt_barang.produsen',
+                'mt_barang.satuan_besar',
+                'mt_barang.satuan_sedang',
+                'mt_barang.rasio_sedang',
+                'mt_barang.rasio_kecil',
+                'mt_barang.satuan_kecil',
+                'mt_barang.aturan_pakai',
+                'mt_barang.sediaan',
+                'mt_barang.harga_modal',
+                'mt_barang.harga_jual',
+                'mt_barang.margin_penjualan',
+            ])
+            ->havingRaw('SUM(mt_sediaan_obat.stok_sekarang) > 0');
         return DataTables::of($data)
             ->addIndexColumn()
             // Gunakan filterColumn jika Anda ingin kustomisasi pencarian
@@ -351,7 +367,7 @@ class DataMasterController extends Controller
         try {
             $id = $request->idbarang;
             $harga = $request->harga;
-            $mt_barang = db::select('select * from mt_barang where id = ?',[$id]);
+            $mt_barang = db::select('select * from mt_barang where id = ?', [$id]);
             $rasio_sedang = $mt_barang[0]->rasio_sedang;
             $rasio_kecil = $mt_barang[0]->rasio_kecil;
             $harga_jual = $harga / $rasio_kecil;
