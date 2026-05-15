@@ -2,7 +2,7 @@
     <div class="sidebar-brand" style="background-color: rgb(91, 209, 123)">
         <a href="./index.html" class="brand-link">
             <img src="./public/img/KynovaPharma.png" alt="AdminLTE Logo" class="brand-image shadow" />
-            <span class="brand-text fw-bold">Kynova Pharma</span>
+            <span class="brand-text fw-bold">FALIH FARMA</span>
         </a>
     </div>
     <div class="sidebar-wrapper" style="background-color: rgb(192, 231, 202)">

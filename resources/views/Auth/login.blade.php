@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>KynovaPharma | Silahkan Login </title>
+    <title>FALIH FARMA | Silahkan Login </title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <style>
@@ -333,12 +333,13 @@
         </div>
     </div>
     <footer>
-        <p>
-            Created with <i class="fa fa-heart"></i> by
-            <a target="_blank" href="https://florin-pop.com">Florin Pop</a>
-            - Read how I created this and how you can join the challenge
-            <a target="_blank" href="https://www.florin-pop.com/blog/2019/03/double-slider-sign-in-up-form/">here</a>.
-        </p>
+      <div class="footer-text">
+    <p>
+        &copy; {{ date('Y') }} <strong>KynovaPharma</strong>. 
+        <span>Smart Solution for Modern Pharmacy Management.</span>
+    </p>
+    <small>Developed with <i class="fa fa-heart text-danger"></i> by <a href="#" class="text-decoration-none">APW LAB</a></small>
+</div>
     </footer>
 </body>
 <script>

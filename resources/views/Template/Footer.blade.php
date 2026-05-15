@@ -2,7 +2,7 @@
     <div class="float-end d-none d-sm-inline">apwlabs 1.1</div>
     <strong>
         Copyright &copy; 2020-2025&nbsp;
-        <a href="https://adminlte.io" class="text-decoration-none">toko pintar</a>.
+        <a href="https://adminlte.io" class="text-decoration-none">Apotek Falih Farma by KynovaPharma</a>.
     </strong>
     All rights reserved.
 </footer>
