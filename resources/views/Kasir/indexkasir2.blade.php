@@ -509,6 +509,11 @@
                             if (response.success) {
                                 Swal.fire('Berhasil!', 'Transaksi disimpan.', 'success').then(
                                     () => {
+                                        idheader = response.id_penjualan;
+                                        // Cara 1: Buka di Tab Baru (Disarankan agar halaman kasir tidak tertutup)
+                                        let url = "{{ route('transaksi.cetak', ':id') }}";
+                                        url = url.replace(':id', idheader);
+                                        window.open(url, '_blank');
                                         location.reload(); // Atau arahkan ke print struk
                                     });
                             } else {

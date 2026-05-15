@@ -26,7 +26,7 @@ class KasirController extends Controller
         $date_end = $end->format('Y-m-d');
         $menu = 'kasir';
         $date = $this->get_date2();
-        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
+        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ? and id_user = ?', [$date, 1, auth()->user()->id]);
 
         $notif_ed = DB::table('mt_sediaan_obat')
             ->whereBetween(DB::raw('DATE(tgl_expired)'), [now(), now()->addDays(90)])
@@ -67,8 +67,7 @@ class KasirController extends Controller
         $date_end = $end->format('Y-m-d');
         $menu = 'kasir2';
         $date = $this->get_date2();
-        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ?', [$date, 1]);
-
+        $get_sesi = db::select('select * from ts_sesi_kasir where date(tgl_sesi_kasir) = ? and status = ? and id_user = ?', [$date, 1, auth()->user()->id]);
         $notif_ed = DB::table('mt_sediaan_obat')
             ->whereBetween(DB::raw('DATE(tgl_expired)'), [now(), now()->addDays(90)])
             ->count();
@@ -87,7 +86,6 @@ class KasirController extends Controller
         $upcoming_count = $hutang_data->where('tanggal_pembayaran', '>=', now()->format('Y-m-d'))->count();
 
         $total_notif = $notif_ed + $notif_hutang;
-
         return view('Kasir.indexkasir2', compact([
             'menu',
             'date_start',
@@ -122,10 +120,8 @@ class KasirController extends Controller
         if (!$request->items || count($request->items) == 0) {
             return response()->json(['success' => false, 'message' => 'Tidak ada item untuk dibeli.']);
         }
-
         // Gunakan Transaction agar data aman
         DB::beginTransaction();
-
         try {
             $no_invoice = $this->get_inv();
             $kembalian = $request->uang_bayar - $request->total_akhir;
@@ -210,10 +206,11 @@ class KasirController extends Controller
             $headerid = $header->id;
             // $html = view('Kasir.view_kembalian', compact(['gt', 'uang', 'headerid']))->render();
             DB::commit();
+            $id_header = $header->id;
             return response()->json([
                 'success' => true,
                 'message' => 'Transaksi berhasil disimpan!',
-                'id_penjualan' => $headerid // Bisa digunakan untuk print struk
+                'id_penjualan' => $id_header // Bisa digunakan untuk print struk
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

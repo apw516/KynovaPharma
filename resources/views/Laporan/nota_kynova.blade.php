@@ -203,7 +203,8 @@
         <div class="footer text-center" style="font-weight:bold">
             Terima Kasih Atas Kunjungan Anda<br>
             <strong>Semoga Lekas Sembuh</strong><br>
-            Simpan struk ini sebagai bukti pembayaran sah.
+            Simpan struk ini sebagai bukti pembayaran sah. <br>
+            Barang Yang Sudah dibeli tidak dapat ditukar / dikembalikan.
         </div>
     </div>
 

@@ -148,7 +148,7 @@
             </td>
             <td>
                 <input type="text" name="diskonrupiah" class="form-control form-control-sm input-mask-uang" value="0">
-                <input type="text" name="diskonrupiahasli" class="form-control form-control-sm nilai-asli" value="0">
+                <input hidden type="text" name="diskonrupiahasli" class="form-control form-control-sm nilai-asli" value="0">
         </td>
         <td>
             <input type="text" name="kodebatch" class="form-control form-control-sm" placeholder="Batch...">

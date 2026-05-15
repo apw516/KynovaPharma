@@ -168,8 +168,8 @@
                         </td>
                         <td class="text-center">
                             @if ($item->status == 1)
-                                <span idsesi="{{ $item->id }}"
-                                    class="badge rounded-pill bg-warning-subtle text-warning px-3 border border-warning-subtle tutupsesi">
+                                <span disabled idsesi="{{ $item->id }}"
+                                    class="badge rounded-pill bg-warning-subtle text-warning px-3 border border-warning-subtle @if(auth()->user()->id == $item->id_user) tutupsesi @endif">
                                     <i class="bi bi-door-open-fill me-1"></i> TERBUKA
                                 </span>
                             @else
