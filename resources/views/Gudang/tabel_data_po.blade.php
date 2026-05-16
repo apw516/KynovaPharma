@@ -100,6 +100,7 @@
     <thead class="table-dark">
         <tr>
             <th class="text-center">Tgl Pembelian</th>
+            <th class="text-center">Tgl Jatuh Tempo</th>
             <th>No. Faktur</th>
             <th>Supplier</th>
             <th class="text-end">Subtotal</th>
@@ -115,6 +116,10 @@
                 <td class="text-center">
                     <span
                         class="fw-bold">{{ $po->tanggal_pembelian ? \Carbon\Carbon::parse($po->tanggal_pembelian)->translatedFormat('d M Y') : '-' }}</span>
+                </td>
+                <td class="text-center">
+                    <span
+                        class="fw-bold">{{ $po->tanggal_pembayaran ? \Carbon\Carbon::parse($po->tanggal_pembayaran)->translatedFormat('d M Y') : '-' }}</span>
                 </td>
                 <td>
                     <code class="text-primary fw-bold">{{ $po->nomor_faktur }}</code>
@@ -203,9 +208,7 @@
         $("#tabelpoheader").DataTable({
             "responsive": true,
             "pageLength": 10,
-            "order": [
-                [0, "desc"]
-            ], // Urutkan tanggal terbaru
+            "ordering":false,
             "language": {
                 "search": "",
                 "searchPlaceholder": "Cari supplier atau no faktur...",
