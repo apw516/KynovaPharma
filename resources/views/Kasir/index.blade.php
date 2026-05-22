@@ -86,8 +86,9 @@
             <div class="card mt-3">
                 <div class="card-header">Silahkan Pilih Obat</div>
                 <div class="card-body">
-                    <button hidden class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#modaladdmasterbarang"><i
-                            class="bi bi-folder-plus" style="margin-right:12px"></i> Master Barang</button>
+                    <button class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#modaladdmasterbarang"><i
+                            class="bi bi-folder-plus" style="margin-right:12px"></i>
+                        Master Barang</button>
                     <table class="table table-bordered table-hover table-sm" id="table-barang">
                         <thead>
                             <tr>
@@ -167,19 +168,223 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="modaladdmasterbarang" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modaladdmasterbarang" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Master Barang</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <form action="" class="forminputstok">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <style>
+                                    .modal-body {
+                                        overflow: visible !important;
+                                    }
+
+                                    /* Atur posisi dan z-index dropdown kustom */
+                                    #list_barang {
+                                        position: absolute;
+                                        top: 100%;
+                                        left: 0;
+                                        z-index: 99999 !important;
+                                        /* Berada jauh di atas z-index modal Bootstrap */
+                                        background: #ffffff;
+                                    }
+
+                                    #list_barang .dropdown-item {
+                                        cursor: pointer;
+                                        padding: 8px 12px;
+                                    }
+
+                                    #list_barang .dropdown-item:hover {
+                                        background-color: #f8f9fa;
+                                    }
+                                </style>
+                                <div class="mb-3 position-relative"> <label for="merkdagang"
+                                        class="form-label fw-bold">Nama
+                                        Barang</label>
+                                    <input type="text" placeholder="Masukan nama merk dagang ..." class="form-control"
+                                        id="merkdagang" name="merkdagang" autocomplete="off">
+                                    <div id="list_barang" class="dropdown-menu w-100 shadow-sm"
+                                        style="display: none; max-height: 200px; overflow-y: auto;"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Kategori</label>
+                                    <input type="text" placeholder="Masukan kategori barang ..." class="form-control"
+                                        id="kategori" name="kategori" aria-describedby="emailHelp">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Produsen</label>
+                                    <input type="text" placeholder="Masukan nama produsen ..." class="form-control"
+                                        id="produsen" name="produsen" aria-describedby="emailHelp">
+                                    <input type="hidden" placeholder="Masukan nama produsen ..." class="form-control"
+                                        id="kode_barang" name="kode_barang" aria-describedby="emailHelp">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Satuan Besar</label>
+                                    <select class="form-select" aria-label="Default select example" id="satuan_besar"
+                                        name="satuan_besar">
+                                        <option selected>- Silahkan Pilih - </option>
+                                        @foreach ($satuan as $s)
+                                            <option value="{{ $s->kode_satuan }}">{{ $s->nama_satuan }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Satuan Sedang</label>
+                                    <select class="form-select" aria-label="Default select example" id="satuan_sedang"
+                                        name="satuan_sedang">
+                                        <option selected>- Silahkan Pilih - </option>
+                                        @foreach ($satuan as $s)
+                                            <option value="{{ $s->kode_satuan }}">{{ $s->nama_satuan }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Satuan Kecil</label>
+                                    <select class="form-select" aria-label="Default select example" id="satuan_kecil"
+                                        name="satuan_kecil">
+                                        <option selected>- Silahkan Pilih - </option>
+                                        @foreach ($satuan as $s)
+                                            <option value="{{ $s->kode_satuan }}">{{ $s->nama_satuan }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Sediaan</label>
+                                    <select class="form-select" aria-label="Default select example" id="sediaan"
+                                        name="sediaan">
+                                        <option selected>- Silahkan Pilih - </option>
+                                        @foreach ($satuan as $s)
+                                            <option value="{{ $s->kode_satuan }}">{{ $s->nama_satuan }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Rasio Satuan Besar Ke Satuan
+                                        Sedang</label>
+                                    <input type="text" placeholder="Masukan rasio sedang ..." class="form-control"
+                                        id="rasio_sedang" name="rasio_sedang" aria-describedby="emailHelp">
+                                    <div id="emailHelp" class="form-text">Contoh: 10 (1 Box isi 10 Strip)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="mb-3">
+                                    <label for="exampleInputEmail1" class="form-label">Rasio Satuan Besar Ke Satuan
+                                        Kecil</label>
+                                    <input type="text" placeholder="Masukan rasio kecil ..." class="form-control"
+                                        id="rasio_kecil" name="rasio_kecil" aria-describedby="emailHelp">
+                                    <div id="emailHelp" class="form-text">Contoh: 10 (1 Strip isi 10 Tablet)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div hidden class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Aturan Pakai</label>
+                            <textarea rows="5" type="text" class="form-control" id="aturanpakai" name="aturanpakai"
+                                placeholder="Masukan aturan pakai barang ..."></textarea>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Data Stok</div>
+                            <div class="card-body">
+                                <div class="infostok mb-3">
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="exampleInputEmail1" class="form-label">Harga Modal</label>
+                                            <input type="email" class="form-control input-mask-uang" name="harga_modal"
+                                                id="harga_modal" aria-describedby="emailHelp" value="0">
+                                            <input hidden type="text" name="harga_modal_asli"
+                                                class="form-control form-control-sm nilai-asli" value="0"
+                                                min="0">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="exampleInputEmail1" class="form-label">Harga Jual</label>
+                                            <input type="email" class="form-control input-mask-uang" id="harga_jual"
+                                                aria-describedby="emailHelp" value="0">
+                                            <input hidden type="text" name="harga_jual_asli"
+                                                class="form-control form-control-sm nilai-asli" value="0"
+                                                min="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="exampleInputEmail1" class="form-label">Batch</label>
+                                            <input type="email" class="form-control" id="batch" name="batch"
+                                                aria-describedby="emailHelp" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="exampleInputEmail1" class="form-label">ED</label>
+                                            <input type="date" class="form-control" id="ed" name="ed"
+                                                aria-describedby="emailHelp" value="{{ $date_start }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="exampleInputEmail1" class="form-label">Stok Dalam Satuan
+                                                        Besar</label>
+                                                    <input type="email" class="form-control" id="stok_besar"
+                                                        name="stok_besar" aria-describedby="emailHelp" value="0">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="exampleInputEmail1" class="form-label">Stok Dalam Satuan
+                                                        Sedang</label>
+                                                    <input type="email" class="form-control" id="stok_sedang"
+                                                        name="stok_sedang" aria-describedby="emailHelp" value="0">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label for="exampleInputEmail1" class="form-label">Stok Dalam Satuan
+                                                        Kecil</label>
+                                                    <input type="email" class="form-control" id="stok_kecil"
+                                                        name="stok_kecil" aria-describedby="emailHelp" value="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="simpandata()">Simpan</button>
                 </div>
             </div>
         </div>
@@ -189,6 +394,7 @@
             var table = $('#table-barang').DataTable({
                 processing: true,
                 serverSide: true,
+                pageLength: 3, // <-- TAMBAHKAN INI AGAR DATA MUNBUL 3 BARIS SAJA
                 ajax: "{{ route('getdatabarang3') }}",
                 columns: [{
                         data: 'kode_barang',
@@ -286,12 +492,7 @@
                             }
 
                             // Gabungkan dengan spasi atau koma
-                            return `
-            <div style="line-height: 1.6;">
-                <small class="text-dark fw-bold d-block" style="font-size: 14px;">Total: ${total} ${row.satuan_kecil}</small>
-                ${hasil.join(' ')}
-            </div>
-        `;
+                            return `<div style="line-height: 1.6;"> <small class="text-dark fw-bold d-block" style="font-size: 14px;">Total: ${total} ${row.satuan_kecil}</small>${hasil.join(' ')}</div>`;
                         }
                     },
                     // {
@@ -628,6 +829,151 @@
                     } else {
                         spinner_off()
                         location.reload()
+                    }
+                }
+            });
+        }
+
+        // 1. Ambil data saat mengetik
+        $(document).on('input', '#merkdagang', function() {
+            var query = $(this).val();
+            var $datalist = $('#list_barang');
+            $('#kode_barang').val(0)
+
+            if (query.length >= 2) {
+                $.ajax({
+                    url: "{{ route('barang.cariauto') }}",
+                    type: "GET",
+                    data: {
+                        term: query
+                    },
+                    success: function(data) {
+                        $datalist.empty();
+                        if (data.length > 0) {
+                            $.each(data, function(index, barang) {
+                                // 1. Buat elemen HTML sebagai objek jQuery
+                                let $item = $(`
+                <a class="dropdown-item item-barang" href="javascript:void(0)">
+                    ${barang.nama_dagang}
+                </a>
+            `);
+
+                                // 2. Tempelkan data objek barang langsung tanpa stringify HTML
+                                $item.data('detail', barang);
+
+                                // 3. Masukkan ke dalam datalist
+                                $datalist.append($item);
+                            });
+                            $datalist.show();
+                        } else {
+                            $datalist.hide();
+                        }
+                    }
+                });
+            } else {
+                $datalist.hide(); // Sembunyikan jika ketikan kurang dari 2 huruf
+            }
+        });
+
+        // 2. Proses ketika item dropdown kustom diklik
+        $(document).on('click', '.item-barang', function(e) {
+            e.preventDefault();
+            var detailBarang = $(this).data('detail');
+            // Set nilai ke input utama
+            $('#merkdagang').val(detailBarang.nama_dagang);
+            // Set nilai otomatis ke form sediaan, satuan, rasio dll
+            $('#sediaan').val(detailBarang.sediaan);
+            $('#satuan_besar').val(detailBarang.satuan_besar);
+            $('#satuan_sedang').val(detailBarang.satuan_sedang);
+            $('#satuan_kecil').val(detailBarang.satuan_kecil);
+            $('#rasio_sedang').val(detailBarang.rasio_sedang);
+            $('#rasio_kecil').val(detailBarang.rasio_kecil);
+            $('#kategori').val(detailBarang.nama_obat)
+            $('#produsen').val(detailBarang.produsen)
+            $('#kode_barang').val(detailBarang.kode_barang)
+            // Sembunyikan kembali dropdown-nya
+            $('#list_barang').hide();
+            cekstok(detailBarang.kode_barang)
+        });
+
+
+        function cekstok(kode_barang) {
+            $.ajax({
+                async: true,
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    kode_barang
+                },
+                url: '<?= route('cekstokbarangauto') ?>',
+                error: function(data) {
+                    spinner_off()
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops....',
+                        text: 'Sepertinya ada masalah......',
+                        footer: ''
+                    })
+                },
+                success: function(data) {
+                    spinner_off()
+                    if (data.code == 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oopss...',
+                            text: data.message,
+                            footer: ''
+                        })
+                    } else {
+                        $('.infostok').html(data.view);
+                    }
+                }
+            });
+        }
+
+        function simpandata() {
+            spinner_on()
+            var data = $('.forminputstok').serializeArray();
+            $.ajax({
+                async: true,
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    data: JSON.stringify(data)
+                },
+                url: '<?= route('stokauto.simpan') ?>',
+                error: function(data) {
+                    spinner_off()
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops....',
+                        text: 'Sepertinya ada masalah......',
+                        footer: ''
+                    })
+                },
+                success: function(data) {
+                    spinner_off()
+                    if (data.kode == 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oopss...',
+                            text: data.message,
+                            footer: ''
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OK',
+                            text: data.message,
+                            footer: ''
+                        })
+                        $('#modaladdmasterbarang').modal('hide'); // <-- Ini yang menutup modal
+                        $('.forminputstok')[0].reset(); // <-- Ini yang mengosongkan form
+                        if (typeof table !== 'undefined') {
+                            table.ajax.reload(null, false);
+                        }
                     }
                 }
             });

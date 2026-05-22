@@ -72,6 +72,9 @@ Route::post('/simpaneditsediaan', [GudangController::class, 'simpaneditsediaan']
 
 
 
+Route::post('/stokauto.simpan', [KasirController::class, 'simpanstokauto'])->name('stokauto.simpan');
+Route::post('/cekstokbarangauto', [KasirController::class, 'cekstokbarangauto'])->name('cekstokbarangauto');
+Route::get('/barang.cariauto', [KasirController::class, 'barangcariauto'])->name('barang.cariauto');
 Route::get('/indexkasir2', [KasirController::class, 'indexkasir2'])->name('indexkasir2');
 Route::get('/indexkasir', [KasirController::class, 'Index'])->name('indexkasir');
 Route::get('/indexlogsesikasir', [KasirController::class, 'indexlogsesikasir'])->name('indexlogsesikasir');

@@ -46,6 +46,7 @@ class KasirController extends Controller
         $upcoming_count = $hutang_data->where('tanggal_pembayaran', '>=', now()->format('Y-m-d'))->count();
 
         $total_notif = $notif_ed + $notif_hutang;
+        $satuan = db::select('select * from mt_satuan');
 
         return view('Kasir.index', compact([
             'menu',
@@ -56,8 +57,260 @@ class KasirController extends Controller
             'notif_hutang',
             'total_notif',
             'overdue_count',
-            'upcoming_count'
+            'upcoming_count',
+            'satuan'
         ]));
+    }
+    public function createkodebarang()
+    {
+        $q = DB::connection('mysql')->select('SELECT id,RIGHT(kode_barang,6) AS kd_max  FROM mt_barang ORDER BY id DESC LIMIT 1');
+        $kd = "";
+        if (count($q) > 0) {
+            foreach ($q as $k) {
+                $tmp = ((int) $k->kd_max) + 1;
+                $kd = sprintf("%06s", $tmp);
+            }
+        } else {
+            $kd = "000001";
+        }
+        date_default_timezone_set('Asia/Jakarta');
+
+        return 'B' . $kd;
+    }
+    public function simpanstokauto(Request $Request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = json_decode($_POST['data'], true);
+            foreach ($data as $nama2) {
+                $index2 = $nama2['name'];
+                $value2 = $nama2['value'];
+                $dataSet[$index2] = $value2;
+            }
+            if ($dataSet['kode_barang'] == 0) {
+                $dataSet['tgl_entry'] = $this->get_now();
+                $databarang = [
+                    'kode_barang' => $this->createkodebarang(),
+                    'produsen' => strtoupper($dataSet['produsen']),
+                    'nama_dagang' => strtoupper($dataSet['merkdagang']),
+                    'nama_obat' => strtoupper($dataSet['kategori']),
+                    'satuan_besar' => $dataSet['satuan_besar'],
+                    'satuan_sedang' => $dataSet['satuan_sedang'],
+                    'satuan_kecil' => $dataSet['satuan_kecil'],
+                    'sediaan' => $dataSet['sediaan'],
+                    'rasio_sedang' => $dataSet['rasio_sedang'],
+                    'rasio_kecil' => $dataSet['rasio_kecil'],
+                    'aturan_pakai' => $dataSet['aturanpakai'],
+                    'pic' => auth()->user()->id,
+                    'tgl_entry' => $this->get_now(),
+                    'tgl_update' => $this->get_now(),
+                ];
+                $baranngbaru =  medicine::create($databarang);
+                $mt_barang = Medicine::where('id', $baranngbaru->id)->get()->first();
+            } else {
+                $mt_barang = Medicine::where('kode_barang', $dataSet['kode_barang'])->get()->first();
+            }
+            //input data stok
+            $data_header = [
+                'nomor_faktur' => 'STOK OPNAME',
+                'tanggal_faktur' => $this->get_date(),
+                'tanggal_pembelian' => $this->get_date(),
+                'jenis_pembayaran' => 2,
+                'tanggal_pembayaran' => $this->get_date(),
+                'nama_supplier' => 'STOK OPNAME',
+                'kode_supplier' => 'SUP000',
+                'nomor_telp' => '-',
+                'diskon_rupiah' => 0,
+                'diskon_persen' => 0,
+                'pajak_persen' => 0,
+                'pajak_rupiah' => 0,
+                'sub_total' => 0,
+                'grand_total' => 0,
+                'status_bayar' => 1,
+                'pic' => auth()->user()->id,
+                'tgl_entry' => $this->get_now(),
+            ];
+            $hh = po_header::create($data_header);
+
+            $harga = $dataSet['harga_jual_asli'];
+            $pajak = 0;
+            // $harga_modal = $harga - 2000;
+            $pajak_rupiah = $dataSet['harga_modal_asli'] * $pajak / 100;
+            // $pajak_rupiah = $harga_modal * $pajak / 100;
+            // $harganya = $harga_modal + $pajak_rupiah;
+            $harganya = $dataSet['harga_modal_asli'] + $pajak_rupiah;
+            // $mt_barang = Medicine::where('id', $dataSet['idbarang'])->get()->first();
+            $rasio_sedang = $dataSet['rasio_sedang'];
+            $rasio_kecil = $dataSet['rasio_kecil'];
+            // $rasio_sedang = 1;
+            // $rasio_kecil = 1;
+            $satuan_besar = $dataSet['satuan_besar'];
+            $satuan_sedang = $dataSet['satuan_sedang'];
+            $satuan_kecil = $dataSet['satuan_kecil'];
+            $stok_besar = $dataSet['stok_besar'];
+            $stok_sedang = $dataSet['stok_sedang'];
+            $stok_kecil = $dataSet['stok_kecil'];
+            //konversi ke satuan besar 
+            $stok_besar_masuk = 0;
+            $stok_sedang_masuk = 0;
+            $stok_kecil_masuk = 0;
+            if ($stok_besar > 0) {
+                $stok_besar_masuk = $stok_besar;
+            }
+            if ($stok_sedang > 0) {
+                $stok_sedang_masuk = $stok_sedang / $rasio_sedang;
+            }
+            if ($stok_kecil > 0) {
+                $rr = $rasio_sedang * $rasio_kecil;
+                $stok_kecil_masuk = $stok_kecil / $rr;
+            }
+            $stok_masuk = $stok_besar_masuk + $stok_sedang_masuk + $stok_kecil_masuk;
+            $data_detail = [
+                'id_header' => $hh->id,
+                'kode_barang' => $mt_barang['kode_barang'],
+                'nama_barang' => $mt_barang['nama_dagang'],
+                'qty' => $stok_masuk,
+                //jumlahpersatuanbesar
+                // 'satuan' => 'STR',
+                'satuan' => $dataSet['satuan_besar'],
+                'harga_beli' => $harganya,
+                //harga satu box
+                'diskon_persen' => 0,
+                'diskon_rupiah' => 0,
+                // 'no_batch' => $mt_barang['kode_barang'],
+                'no_batch' => $dataSet['batch'],
+                'tgl_expired' => $dataSet['ed']
+            ];
+            $po_detail = po_detail::create($data_detail);
+            if ($harga > 0) {
+                $harga_jual = $harga / $rasio_kecil;
+                Medicine::where('kode_barang', $mt_barang['kode_barang'])->update([
+                    'rasio_sedang' => $dataSet['rasio_sedang'],
+                    'rasio_kecil' => $dataSet['rasio_kecil'],
+                    'satuan_besar' => $dataSet['satuan_besar'],
+                    'satuan_sedang' => $dataSet['satuan_sedang'],
+                    'satuan_kecil' => $dataSet['satuan_kecil'],
+                    'sediaan' => 'STR',
+                    'harga_jual' => $harga_jual
+                ]);
+            } else {
+                Medicine::where('kode_barang', $mt_barang['kode_barang'])->update([
+                    // 'rasio_sedang' => 1,
+                    // 'rasio_kecil' => 1,
+                    // 'satuan_besar' => 'STR',
+                    // 'satuan_sedang' => 'STR',
+                    // 'satuan_kecil' => 'STR',
+                    // 'sediaan' => 'STR',
+                    'rasio_sedang' => $dataSet['rasio_sedang'],
+                    'rasio_kecil' => $dataSet['rasio_kecil'],
+                    'satuan_besar' => $dataSet['satuan_besar'],
+                    'satuan_sedang' => $dataSet['satuan_sedang'],
+                    'satuan_kecil' => $dataSet['satuan_kecil'],
+                    'sediaan' => $dataSet['satuan_kecil']
+                ]);
+            }
+            $harga_sedang = $harganya / $rasio_sedang;
+            $harga_kecil = $harga_sedang / $rasio_kecil;
+            //konversi_kesatuan_kecil
+            // $stok_masuk =$dataSet['qty'] * $rasio_sedang * $rasio_kecil;
+            // if (count($cek_sediaan) == 0) {
+            $stok_besar_masuk_2 = 0;
+            $stok_sedang_masuk_2 = 0;
+            $stok_kecil_masuk_2 = 0;
+            if ($stok_besar > 0) {
+                $stok_besar_masuk_2 = $stok_besar * $rasio_sedang * $rasio_kecil;
+            }
+            if ($stok_sedang > 0) {
+                $stok_sedang_masuk_2 = $stok_sedang * $rasio_kecil;
+            }
+            if ($stok_kecil > 0) {
+                $stok_kecil_masuk_2 = $stok_kecil;
+            }
+            $stok_in = $stok_besar_masuk_2 + $stok_sedang_masuk_2 + $stok_kecil_masuk_2;
+            $datasediaan = [
+                'kode_barang' => $mt_barang['kode_barang'],
+                'kode_supplier' => 'SUP003',
+                'tgl_expired' => $dataSet['ed'],
+                'harga_modal_satuan_besar' => $harganya,
+                //harga_satuan_besar
+                'harga_modal_satuan_sedang' => $harga_sedang,
+                //harga_satuan_sedang
+                'harga_modal_satuan_kecil' => $harga_kecil,
+                //harga_satuan_kecil
+                'kode_batch' => $dataSet['batch'],
+                // 'kode_batch' => $mt_barang['kode_barang'],
+                'stok_awal' => 0,
+                'stok_sekarang' => $stok_in,
+                //stok satuan kecil
+                'tgl_input' => $this->get_now(),
+                'id_po_detail' => $po_detail->id
+            ];
+            $datass = model_sediaan_barang::create($datasediaan);
+            $id_sediaan = $datass->id;
+            $last_log = db::table('log_transaksi_stok')
+                ->where('kode_barang', $mt_barang['kode_barang'])
+                ->orderBy('id', 'desc')
+                ->first();
+            $stok_awal_log = $last_log ? $last_log->stok_now : 0;
+            // 2. Siapkan data mutasi stok
+            $data_log = [
+                'id_dokumen'  => $hh->id, // Menggunakan nomor PO sebagai referensi
+                'kode_barang'   => $mt_barang['kode_barang'],
+                'stok_in'         => $stok_in, // Sudah dalam satuan terkecil
+                'stok_out'        => 0,
+                'stok_last'     => $stok_awal_log,
+                'stok_now'   => $stok_awal_log + $stok_in,
+                'tgl_input'       => $this->get_now(),
+                'keterangan'    => 'Masuk dari stok opname',
+                'id_sediaan'       => $id_sediaan // Mencatat siapa yang melakukan input
+            ];
+            model_log_transaksi_stok::create($data_log);
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data master stok baru berhasil disimpan!'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal input database: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function cekstokbarangauto(Request $request)
+    {
+        $log_terakhir = DB::table('log_transaksi_stok')
+            ->where('kode_barang', $request->kode_barang)
+            ->orderBy('id', 'desc')
+            ->first(); // Mengambil 1 data terakhir saja (mengembalikan objek / null)
+        if ($log_terakhir) {
+            $stok_sekarang = $log_terakhir->stok_now; // sesuaikan nama kolom stok Anda
+        } else {
+            // Log belum ada atau barang baru
+            $stok_sekarang = 0;
+        }
+        $databarang = Medicine::where('kode_barang', $request->kode_barang)->get()->first();
+        $html = view('Kasir.info_stok_auto', compact(['stok_sekarang', 'databarang']))->render();
+        $response = [
+            'code' => 200,
+            'view' => $html,
+            'message' => 'sukses'
+        ];
+        echo json_encode($response);
+        die;
+    }
+    public function barangcariauto(Request $request)
+    {
+        $term = $request->get('term');
+
+        // Cari barang berdasarkan nama_barang atau merk dagang
+        $data = DB::table('mt_barang') // Sesuaikan nama tabel master barang Anda
+            ->where('nama_dagang', 'LIKE', '%' . $term . '%')
+            ->limit(10) // Batasi maksimal 10 data yang muncul agar query cepat
+            ->get();
+        // Kembalikan dalam bentuk JSON agar dibaca oleh AJAX JQuery
+        return response()->json($data);
     }
     public function indexkasir2()
     {
@@ -411,7 +664,7 @@ class KasirController extends Controller
             $value2 = $nama2['value'];
             $dataSet2[$index2] = $value2;
             if ($index2 == 'harga') {
-                $arrayobat[] = $dataSet2;
+                $dataSetayobat[] = $dataSet2;
             }
         }
         if (empty($arrayobat)) {
@@ -622,7 +875,7 @@ class KasirController extends Controller
             $value2 = $nama2['value'];
             $dataSet2[$index2] = $value2;
             if ($index2 == 'harga') {
-                $arrayobat[] = $dataSet2;
+                $dataSetayobat[] = $dataSet2;
             }
         }
         DB::beginTransaction();
