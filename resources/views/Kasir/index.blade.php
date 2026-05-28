@@ -575,17 +575,32 @@
                     return;
                 }
                 let opsiSatuan = '';
-                daftarSatuan.forEach(item => {
+                daftarSatuan.forEach((item, index) => {
                     // Memecah "besar:Box" menjadi ["besar", "Box"]
                     let part = item.split(':');
                     let kategori = part[0]; // besar / sedang / kecil
                     let namaSatuan = part[1]; // Box / Strip / Tablet
 
                     if (namaSatuan) {
-                        // Value berisi kategori, teks tampil berisi nama satuan
-                        opsiSatuan += `<option value="${kategori}">${namaSatuan}</option>`;
+                        // Logika Pengecekan: Jika ini adalah data kedua (index === 1) ATAU kategorinya adalah 'sedang'
+                        let selected = (index === 1 || kategori === 'sedang') ? 'selected' : '';
+
+                        // Masukkan variabel ${selected} ke dalam tag <option>
+                        opsiSatuan +=
+                            `<option value="${kategori}" ${selected}>${namaSatuan}</option>`;
                     }
                 });
+                // daftarSatuan.forEach(item => {
+                //     // Memecah "besar:Box" menjadi ["besar", "Box"]
+                //     let part = item.split(':');
+                //     let kategori = part[0]; // besar / sedang / kecil
+                //     let namaSatuan = part[1]; // Box / Strip / Tablet
+
+                //     if (namaSatuan) {
+                //         // Value berisi kategori, teks tampil berisi nama satuan
+                //         opsiSatuan += `<option value="${kategori}">${namaSatuan}</option>`;
+                //     }
+                // });
                 // 2. Bentuk Baris Inputan Baru
                 let html = `
             <tr id="row-${idBarang}">

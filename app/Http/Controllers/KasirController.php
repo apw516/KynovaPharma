@@ -664,7 +664,7 @@ class KasirController extends Controller
             $value2 = $nama2['value'];
             $dataSet2[$index2] = $value2;
             if ($index2 == 'harga') {
-                $dataSetayobat[] = $dataSet2;
+                $arrayobat[] = $dataSet2;
             }
         }
         if (empty($arrayobat)) {
