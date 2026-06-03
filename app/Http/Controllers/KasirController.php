@@ -48,7 +48,7 @@ class KasirController extends Controller
         // $total_notif = $notif_ed + $notif_hutang;
 
         // Tentukan batas tanggal: Hari ini + 5 hari
-        $batasTanggal = now()->addDays(35)->format('Y-m-d');
+        $batasTanggal = now()->addDays(5)->format('Y-m-d');
         $hariIni = now()->format('Y-m-d');
 
         // Query hanya mengambil data yang tanggal pembayarannya <= (Hari ini + 5 hari)

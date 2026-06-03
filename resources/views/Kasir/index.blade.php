@@ -1146,7 +1146,7 @@
         $(function() {
             $("#tabelpoheader").DataTable({
                 "responsive": true,
-                "pageLength": 10,
+                "pageLength": 2,
                 "ordering": false,
                 "language": {
                     "search": "",
