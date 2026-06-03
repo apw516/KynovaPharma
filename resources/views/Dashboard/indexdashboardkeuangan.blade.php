@@ -150,7 +150,7 @@
                                         </span>
                                     </td>
                                     <td class="text-end pe-4">
-                                        <button class="btn btn-sm btn-outline-primary border-0"><i
+                                        <button class="btn btn-sm btn-outline-primary border-0 btn-bayar" data-id="{{ $pay->id }}"><i
                                                 class="bi bi-wallet2 me-1"></i> Bayar</button>
                                     </td>
                                 </tr>
@@ -231,5 +231,103 @@
                 }
             }
         });
+        $('.btn-bayar').on('click', function() {
+            Swal.fire({
+                title: "Anda yakin ?",
+                text: "Data PO sudah dibayar !",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, Po sudah dibayar !"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    id = $(this).attr('data-id')
+                    bayarpo(id)
+                }
+            });
+        })
+
+        function returpo(id) {
+            $.ajax({
+                async: true,
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id
+                },
+                url: '<?= route('returpo') ?>',
+                error: function(data) {
+                    spinner_off()
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops....',
+                        text: 'Sepertinya ada masalah......',
+                        footer: ''
+                    })
+                },
+                success: function(data) {
+                    spinner_off()
+                    if (data.code == 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oopss...',
+                            text: data.message,
+                            footer: ''
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OK',
+                            text: data.message,
+                            footer: ''
+                        })
+                        location.reload()
+                    }
+                }
+            });
+        }
+
+        function bayarpo(id) {
+            $.ajax({
+                async: true,
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id
+                },
+                url: '<?= route('bayarpo') ?>',
+                error: function(data) {
+                    spinner_off()
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ooops....',
+                        text: 'Sepertinya ada masalah......',
+                        footer: ''
+                    })
+                },
+                success: function(data) {
+                    spinner_off()
+                    if (data.code == 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oopss...',
+                            text: data.message,
+                            footer: ''
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OK',
+                            text: data.message,
+                            footer: ''
+                        })
+                        location.reload()
+                    }
+                }
+            });
+        }
     </script>
 @endsection
