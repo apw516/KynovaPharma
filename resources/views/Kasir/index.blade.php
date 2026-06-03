@@ -200,11 +200,11 @@
                                                             </button>
                                                         @endif
                                                         @if ($po->status == '1')
-                                                            <button @if (auth()->user()->hak_akses != 1) disabled @endif
+                                                            {{-- <button @if (auth()->user()->hak_akses != 1) disabled @endif
                                                                 class="btn btn-white btn-sm border btn-batal"
                                                                 data-id="{{ $po->id }}" title="Batalkan/Retur">
                                                                 <i class="bi bi-x-circle text-danger"></i>
-                                                            </button>
+                                                            </button> --}}
                                                         @endif
                                                     </div>
                                                 </td>
@@ -535,6 +535,24 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="simpandata()">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modaldetail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Detail Purchase Order</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="v_d">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
