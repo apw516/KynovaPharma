@@ -59,13 +59,13 @@
                                         <span class="badge bg-white text-danger ms-1">{{ $overdue_count }} Lewat Jatuh
                                             Tempo</span>
                                     @endif
-                                    <a href="{{ route('indexpurchaseorder') }}"
+                                    <a hidden href="{{ route('indexpurchaseorder') }}"
                                         class="fw-bold text-decoration-underline ms-1 text-dark">Selesaikan Pembayaran</a>
                                 </p>
                             </div>
 
                         </div>
-                        <div class="card">
+                        <div class="card mt-2">
                             <div class="card-header">List Tagihan</div>
                             <div class="card-body">
                                 <style>
