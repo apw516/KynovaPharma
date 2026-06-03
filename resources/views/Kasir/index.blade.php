@@ -65,7 +65,7 @@
 
                         </div>
                         <div class="card mt-2" id="datalist" hidden>
-                            <div class="card-header">List Tagihan <button class="btn btn-info" onclick="tutuplist()">X</button></div>
+                            <div class="card-header">List Tagihan <button class="btn btn-danger justify-content-end" onclick="tutuplist()">X</button></div>
                             <div class="card-body">
                                 <style>
                                     #tabelpoheader thead th {
