@@ -84,7 +84,7 @@ class DashboardController extends Controller
         // 5. Data Tambahan untuk Tabel Jatuh Tempo (Bawah)
         $pendingPayments = DB::table('ts_po_header as ph')
             ->join('mt_supplier as s', 'ph.kode_supplier', '=', 's.kode_supplier')
-            ->select('ph.id,s.nama_supplier as nama_pbf', 'ph.nomor_faktur', 'ph.tanggal_pembayaran as jatuh_tempo', 'ph.grand_total as total')
+            ->select('ph.id','s.nama_supplier as nama_pbf', 'ph.nomor_faktur', 'ph.tanggal_pembayaran as jatuh_tempo', 'ph.grand_total as total')
             ->where('ph.status_bayar', '0')
             ->orderBy('ph.tanggal_pembayaran', 'asc')
             ->limit(5)
