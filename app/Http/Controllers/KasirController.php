@@ -33,18 +33,40 @@ class KasirController extends Controller
             ->count();
 
         // Ambil semua PO yang belum Lunas (Tanpa batas tanggal awal)
+        // $hutang_data = DB::table('ts_po_header')
+        //     ->where('status_bayar', '!=', '1')
+        //     ->where('status', 1) // 1 = PO Aktif/Disetujui
+        //     ->get();
+
+        // // Hitung total notif untuk Alert
+        // $notif_hutang = $hutang_data->count();
+
+        // // Pisahkan mana yang sudah lewat (Overdue) dan mana yang mendekati (Jatuh Tempo)
+        // $overdue_count = $hutang_data->where('tanggal_pembayaran', '<', now()->format('Y-m-d'))->count();
+        // $upcoming_count = $hutang_data->where('tanggal_pembayaran', '>=', now()->format('Y-m-d'))->count();
+
+        // $total_notif = $notif_ed + $notif_hutang;
+
+        // Tentukan batas tanggal: Hari ini + 5 hari
+        $batasTanggal = now()->addDays(5)->format('Y-m-d');
+        $hariIni = now()->format('Y-m-d');
+
+        // Query hanya mengambil data yang tanggal pembayarannya <= (Hari ini + 5 hari)
         $hutang_data = DB::table('ts_po_header')
             ->where('status_bayar', '!=', '1')
-            ->where('status', 1) // 1 = PO Aktif/Disetujui
+            ->where('nama_supplier','!=','STOK OPNAME')
+            ->where('status', 1)
+            ->whereDate('tanggal_pembayaran', '<=', $batasTanggal) // Mengunci batas maksimal +5 hari
             ->get();
 
-        // Hitung total notif untuk Alert
+        // Hitung total notif untuk Alert (Otomatis hanya menghitung yang <= 5 hari atau overdue)
         $notif_hutang = $hutang_data->count();
 
-        // Pisahkan mana yang sudah lewat (Overdue) dan mana yang mendekati (Jatuh Tempo)
-        $overdue_count = $hutang_data->where('tanggal_pembayaran', '<', now()->format('Y-m-d'))->count();
-        $upcoming_count = $hutang_data->where('tanggal_pembayaran', '>=', now()->format('Y-m-d'))->count();
+        // Pisahkan mana yang sudah lewat (Overdue) dan mana yang mendekati (Jatuh Tempo 0 s.d 5 hari lagi)
+        $overdue_count  = $hutang_data->where('tanggal_pembayaran', '<', $hariIni)->count();
+        $upcoming_count = $hutang_data->where('tanggal_pembayaran', '>=', $hariIni)->count();
 
+        // Total akumulasi alert internal sistem
         $total_notif = $notif_ed + $notif_hutang;
         $satuan = db::select('select * from mt_satuan');
 
@@ -875,7 +897,7 @@ class KasirController extends Controller
             $value2 = $nama2['value'];
             $dataSet2[$index2] = $value2;
             if ($index2 == 'harga') {
-                $dataSetayobat[] = $dataSet2;
+                $arrayobat[] = $dataSet2;
             }
         }
         DB::beginTransaction();

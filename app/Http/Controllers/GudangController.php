@@ -235,6 +235,7 @@ class GudangController extends Controller
             // 2. Query data PO berdasarkan range tanggal
             // Menggunakan whereBetween untuk performa lebih baik
             $data_po = po_header::whereBetween('tanggal_pembelian', [$tgl_awal, $tgl_akhir])
+                ->where('nama_supplier','!=','STOK OPNAME')
                 ->orderBy('id', 'desc')
                 ->get();
 
