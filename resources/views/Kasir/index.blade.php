@@ -59,14 +59,13 @@
                                         <span class="badge bg-white text-danger ms-1">{{ $overdue_count }} Lewat Jatuh
                                             Tempo</span>
                                     @endif
-                                    <a hidden href="{{ route('indexpurchaseorder') }}"
-                                        class="fw-bold text-decoration-underline ms-1 text-dark">Selesaikan Pembayaran</a>
+                                    <a class="fw-bold text-decoration-underline ms-1 text-dark" onclick="detailtagihan()">Lihat detail</a>
                                 </p>
                             </div>
 
                         </div>
-                        <div class="card mt-2">
-                            <div class="card-header">List Tagihan</div>
+                        <div class="card mt-2" id="datalist" hidden>
+                            <div class="card-header">List Tagihan <button class="btn btn-info" onclick="tutuplist()">X</button></div>
                             <div class="card-body">
                                 <style>
                                     #tabelpoheader thead th {
@@ -1335,6 +1334,14 @@
                     }
                 }
             });
+        }
+        function detailtagihan()
+        {
+            $('#datalist').removeAttr('hidden',true)
+        }
+        function tutuplist()
+        {
+            $('#datalist').attr('hidden',true)
         }
     </script>
 @endsection
